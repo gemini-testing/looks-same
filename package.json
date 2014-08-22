@@ -1,0 +1,35 @@
+{
+  "name": "looks-same",
+  "version": "0.0.0",
+  "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "pngjs": "^0.4.0",
+    "chai": "^1.9.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SevInf/looks-same.git"
+  },
+  "keywords": [
+    "png",
+    "compare",
+    "ciede2000",
+    "diff"
+  ],
+  "bugs": {
+    "url": "https://github.com/SevInf/looks-same/issues"
+  },
+  "homepage": "https://github.com/SevInf/looks-same"
+}
