@@ -7,16 +7,20 @@
     "test": "test"
   },
   "dependencies": {
+    "color-diff": "^0.1.5",
     "parse-color": "^1.0.0",
     "pngjs": "^0.4.0"
   },
   "devDependencies": {
+    "chai": "^1.9.1",
+    "gm": "^1.16.0",
+    "matcha": "^0.5.0",
     "mocha": "^1.21.4",
-    "temp": "^0.8.1",
-    "chai": "^1.9.1"
+    "temp": "^0.8.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "bench": "matcha benchmark/*"
   },
   "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
   "license": "MIT",

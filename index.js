@@ -54,6 +54,9 @@ function readPair(first, second, callback) {
     });
 }
 
+function processRow(png1, png2, row) {
+}
+
 function forEachPixelPair(png1, png2, callback) {
     var width = Math.min(png1.width, png2.width),
         height = Math.min(png1.height, png2.height);

@@ -18,6 +18,13 @@
     "maxparams": 3,
     "node": true,
     "overrides": {
-      "test/*": {"mocha": true}
+      "test/*": {"mocha": true},
+      "benchmark/*": {
+        "globals": {
+          "suite": false,
+          "bench": false,
+          "set": false
+        }
+      }
     }
 }
