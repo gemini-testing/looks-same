@@ -16,5 +16,8 @@
     "strict": true,
     "trailing": true,
     "maxparams": 3,
-    "node": true
+    "node": true,
+    "overrides": {
+      "test/*": {"mocha": true}
+    }
 }
