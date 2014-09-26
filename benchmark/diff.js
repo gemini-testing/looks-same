@@ -6,11 +6,8 @@ var path = require('path'),
     looksSame = require('..');
 
 function imagePath(image) {
-    return path.resolve(__dirname, '..',  'test', 'data', image);
+    return path.resolve(__dirname, '..',  'test', 'data', 'src', image);
 }
-
-var refImage = imagePath('image1.png'),
-    currImage = imagePath('image3.png');
 
 function benchamrkDiff(title, refImage, currImage) {
     suite(title, function() {
@@ -42,5 +39,12 @@ function benchamrkDiff(title, refImage, currImage) {
     });
 }
 
-benchamrkDiff('small diff', imagePath('image1.png'), imagePath('image3.png'));
-benchamrkDiff('large diff', imagePath('large-image1.png'), imagePath('large-image2.png'));
+benchamrkDiff('small diff',
+    imagePath('ref.png'),
+    imagePath('different.png')
+);
+
+benchamrkDiff('large diff',
+    imagePath('large-ref.png'),
+    imagePath('large-different.png')
+);
