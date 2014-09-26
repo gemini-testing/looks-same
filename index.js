@@ -1,31 +1,8 @@
 'use strict';
 var fs = require('fs'),
-    PNG = require('pngjs').PNG,
     parseColor = require('parse-color'),
-    colorDiff = require('color-diff');
-
-function readPNG(path, callback) {
-    var png = new PNG({
-        filterType: -1
-    });
-    var src = fs.createReadStream(path);
-
-    png.on('parsed', function() {
-        callback(null, png);
-    });
-
-    png.on('error', function(error) {
-        callback(error, null);
-    });
-    src.pipe(png);
-}
-
-function parseBuffer(buffer, callback) {
-    var png = new PNG({
-        filterType: -1
-    });
-    png.parse(buffer, callback);
-}
+    colorDiff = require('color-diff'),
+    PNGImage = require('./png');
 
 function readPair(first, second, callback) {
     var src = {first: first, second: second},
@@ -35,7 +12,7 @@ function readPair(first, second, callback) {
 
     ['first', 'second'].forEach(function(key) {
         var source = src[key],
-            readFunc = Buffer.isBuffer(source)? parseBuffer : readPNG;
+            readFunc = Buffer.isBuffer(source)? PNGImage.fromBuffer : PNGImage.fromFile;
 
         readFunc(source, function(error, png) {
             if (failed) {
@@ -54,29 +31,20 @@ function readPair(first, second, callback) {
     });
 }
 
-function forEachPixelPair(png1, png2, rowCallback, endCallback) {
+function forEachPixelPair(png1, png2, pixelCallback, endCallback) {
     var width = Math.min(png1.width, png2.width),
         height = Math.min(png1.height, png2.height),
 
-        processRow = function processRow(row) {
+        processRow = function processRow(y) {
             setImmediate(function() {
                 for (var x = 0; x < width; x++) {
-                    var idx = (width * row + x) * 4,
-                        color1 = {
-                            R: png1.data[idx],
-                            G: png1.data[idx + 1],
-                            B: png1.data[idx + 2]
-                        },
-                        color2 = {
-                            R: png2.data[idx],
-                            G: png2.data[idx + 1],
-                            B: png2.data[idx + 2]
-                        };
-                    rowCallback(color1, color2, idx);
+                    var color1 = png1.getPixel(x, y),
+                        color2 = png2.getPixel(x, y);
+                    pixelCallback(color1, color2, x, y);
                 }
-                row++;
-                if (row < height) {
-                    processRow(row);
+                y++;
+                if (y < height) {
+                    processRow(y);
                 } else {
                     endCallback();
                 }
@@ -132,29 +100,20 @@ module.exports = exports = function looksSame(reference, image, callback) {
     });
 };
 
-function buildDiffStream(png1, png2, options, callback) {
+function buildDiffImage(png1, png2, options, callback) {
     var width = Math.max(png1.width, png2.width),
         height = Math.max(png1.height, png2.height),
         highlightColor = options.highlightColor,
-        result = new PNG({
-            width: width,
-            height: height
-        });
+        result = PNGImage.createSync(width, height);
 
-    forEachPixelPair(png1, png2, function(color1, color2, idx) {
+    forEachPixelPair(png1, png2, function(color1, color2, x, y) {
         if (!areColorsLookSame(color1, color2)) {
-            result.data[idx] = highlightColor.R;
-            result.data[idx + 1] = highlightColor.G;
-            result.data[idx + 2] = highlightColor.B;
-            result.data[idx + 3] = 255;
+            result.setPixel(x, y, highlightColor);
         } else {
-            result.data[idx] = color1.R;
-            result.data[idx + 1] = color1.G;
-            result.data[idx + 2] = color1.B;
-            result.data[idx + 3] = 255;
+            result.setPixel(x, y, color1);
         }
     }, function() {
-        callback(result.pack());
+        callback(result);
     });
 }
 
@@ -169,20 +128,15 @@ function parseColorString(str) {
 
 exports.saveDiff = function saveDiff(opts, callback) {
     readPair(opts.reference, opts.current, function(error, result) {
+        if (error) {
+            return callback(error);
+        }
         var diffOptions = {
                 highlightColor: parseColorString(opts.highlightColor)
             };
 
-        buildDiffStream(result.first, result.second, diffOptions, function(stream) {
-            var writeStream = fs.createWriteStream(opts.diff);
-            stream.pipe(writeStream);
-
-            writeStream.on('error', function(error) {
-                callback(error);
-            });
-            writeStream.on('finish', function() {
-                callback(null);
-            });
+        buildDiffImage(result.first, result.second, diffOptions, function(result) {
+            result.save(opts.diff, callback);
         });
     });
 };
