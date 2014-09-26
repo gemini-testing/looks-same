@@ -54,37 +54,43 @@ function readPair(first, second, callback) {
     });
 }
 
-function processRow(png1, png2, row) {
-}
-
-function forEachPixelPair(png1, png2, callback) {
+function forEachPixelPair(png1, png2, rowCallback, endCallback) {
     var width = Math.min(png1.width, png2.width),
-        height = Math.min(png1.height, png2.height);
+        height = Math.min(png1.height, png2.height),
 
-    outer:
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            var idx = (width * y + x) * 4,
-                color1 = {
-                    R: png1.data[idx],
-                    G: png1.data[idx + 1],
-                    B: png1.data[idx + 2]
-                },
-                color2 = {
-                    R: png2.data[idx],
-                    G: png2.data[idx + 1],
-                    B: png2.data[idx + 2]
-                };
-            if (callback(color1, color2, idx)) {
-                break outer;
-            }
-        }
-    }
+        processRow = function processRow(row) {
+            setImmediate(function() {
+                for (var x = 0; x < width; x++) {
+                    var idx = (width * row + x) * 4,
+                        color1 = {
+                            R: png1.data[idx],
+                            G: png1.data[idx + 1],
+                            B: png1.data[idx + 2]
+                        },
+                        color2 = {
+                            R: png2.data[idx],
+                            G: png2.data[idx + 1],
+                            B: png2.data[idx + 2]
+                        };
+                    rowCallback(color1, color2, idx);
+                }
+                row++;
+                if (row < height) {
+                    processRow(row);
+                } else {
+                    endCallback();
+                }
+            });
+        };
+
+    processRow(0);
 }
 
-function arePNGsLookSame(png1, png2) {
+function arePNGsLookSame(png1, png2, callback) {
     if (png1.width !== png2.width || png1.height !== png2.height) {
-        return false;
+        return process.nextTick(function() {
+            callback(false);
+        });
     }
     var result = true;
     forEachPixelPair(png1, png2, function(color1, color2) {
@@ -92,8 +98,9 @@ function arePNGsLookSame(png1, png2) {
             result = false;
             return true;
         }
+    }, function() {
+        callback(result);
     });
-    return result;
 }
 
 function areColorsLookSame(c1, c2) {
@@ -118,11 +125,14 @@ module.exports = exports = function looksSame(reference, image, callback) {
         if (error) {
             return callback(error, null);
         }
-        callback(null, arePNGsLookSame(result.first, result.second));
+
+        arePNGsLookSame(result.first, result.second, function(result) {
+            callback(null, result);
+        });
     });
 };
 
-function buildDiffStream(png1, png2, options) {
+function buildDiffStream(png1, png2, options, callback) {
     var width = Math.max(png1.width, png2.width),
         height = Math.max(png1.height, png2.height),
         highlightColor = options.highlightColor,
@@ -143,8 +153,9 @@ function buildDiffStream(png1, png2, options) {
             result.data[idx + 2] = color1.B;
             result.data[idx + 3] = 255;
         }
+    }, function() {
+        callback(result.pack());
     });
-    return result.pack();
 }
 
 function parseColorString(str) {
@@ -160,16 +171,18 @@ exports.saveDiff = function saveDiff(opts, callback) {
     readPair(opts.reference, opts.current, function(error, result) {
         var diffOptions = {
                 highlightColor: parseColorString(opts.highlightColor)
-            },
-            stream = buildDiffStream(result.first, result.second, diffOptions),
-            writeStream = fs.createWriteStream(opts.diff);
-        stream.pipe(writeStream);
+            };
 
-        writeStream.on('error', function(error) {
-            callback(error);
-        });
-        writeStream.on('finish', function() {
-            callback(null);
+        buildDiffStream(result.first, result.second, diffOptions, function(stream) {
+            var writeStream = fs.createWriteStream(opts.diff);
+            stream.pipe(writeStream);
+
+            writeStream.on('error', function(error) {
+                callback(error);
+            });
+            writeStream.on('finish', function() {
+                callback(null);
+            });
         });
     });
 };
