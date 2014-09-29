@@ -177,4 +177,34 @@ describe('saveDiff', function() {
             });
         });
     });
+
+    it('should allow to build diff for taller images', function(done) {
+        var _this = this;
+        looksSame.saveDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('tall-different.png'),
+            diff: this.tempName,
+            highlightColor: '#FF00FF'
+        }, function() {
+            looksSame(imagePath('diffs/taller-magenta.png'), _this.tempName, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
+    it('should allow to build diff for wider images', function(done) {
+        var _this = this;
+        looksSame.saveDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('wide-different.png'),
+            diff: this.tempName,
+            highlightColor: '#FF00FF'
+        }, function() {
+            looksSame(imagePath('diffs/wider-magenta.png'), _this.tempName, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
 });

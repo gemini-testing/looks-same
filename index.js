@@ -131,19 +131,45 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
 function buildDiffImage(png1, png2, options, callback) {
     var width = Math.max(png1.width, png2.width),
         height = Math.max(png1.height, png2.height),
+        minWidth = Math.min(png1.width, png2.width),
+        minHeight = Math.min(png1.height, png2.height),
         highlightColor = options.highlightColor,
         result = new PNGOut(width, height);
 
-    everyPixelPair(png1, png2, function(color1, color2, x, y) {
+    iterateRect(width, height, function(x, y) {
+        if (x >= minWidth || y >= minHeight) {
+            result.setPixel(x, y, highlightColor);
+            return;
+        }
+        var color1 = png1.getPixel(x, y),
+            color2 = png2.getPixel(x, y);
+
         if (!areColorsLookSame(color1, color2)) {
             result.setPixel(x, y, highlightColor);
         } else {
             result.setPixel(x, y, color1);
         }
-        return true;
     }, function() {
         callback(result);
     });
+}
+
+function iterateRect(width, height, callback, endCallback) {
+    var processRow = function processRow(y) {
+        setImmediate(function() {
+            for (var x = 0; x < width; x++) {
+                callback(x, y);
+            }
+            y++;
+            if (y < height) {
+                processRow(y);
+            } else {
+                endCallback();
+            }
+        });
+    };
+
+    processRow(0);
 }
 
 function parseColorString(str) {
