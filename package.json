@@ -9,7 +9,8 @@
   "dependencies": {
     "color-diff": "^0.1.5",
     "parse-color": "^1.0.0",
-    "pngjs": "^0.4.0"
+    "pngjs": "^0.4.0",
+    "pngparse": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^1.9.1",

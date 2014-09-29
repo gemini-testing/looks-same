@@ -1,7 +1,9 @@
 'use strict';
 var parseColor = require('parse-color'),
     colorDiff = require('color-diff'),
-    PNGImage = require('./png');
+    png = require('./png'),
+    PNGIn = png.PNGIn,
+    PNGOut = png.PNGOut;
 
 function readPair(first, second, callback) {
     var src = {first: first, second: second},
@@ -11,7 +13,7 @@ function readPair(first, second, callback) {
 
     ['first', 'second'].forEach(function(key) {
         var source = src[key],
-            readFunc = Buffer.isBuffer(source)? PNGImage.fromBuffer : PNGImage.fromFile;
+            readFunc = Buffer.isBuffer(source)? PNGIn.fromBuffer : PNGIn.fromFile;
 
         readFunc(source, function(error, png) {
             if (failed) {
@@ -126,7 +128,7 @@ function buildDiffImage(png1, png2, options, callback) {
     var width = Math.max(png1.width, png2.width),
         height = Math.max(png1.height, png2.height),
         highlightColor = options.highlightColor,
-        result = PNGImage.createSync(width, height);
+        result = new PNGOut(width, height);
 
     everyPixelPair(png1, png2, function(color1, color2, x, y) {
         if (!areColorsLookSame(color1, color2)) {

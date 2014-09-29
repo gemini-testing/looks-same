@@ -1,13 +1,63 @@
 'use strict';
 var fs = require('fs'),
+    pngparse = require('pngparse'),
     PNG = require('pngjs').PNG;
 
-function PNGImage(png) {
-    this._png = png;
+function PNGIn(data) {
+    this._data = data;
 }
 
-PNGImage.prototype = {
-    constructor: PNGImage,
+PNGIn.prototype = {
+    constructor: PNGIn,
+
+    getPixel: function(x, y) {
+        var pixel = this._data.getPixel(x, y);
+        return {
+            R: (pixel & 0xFF000000) >> 24,
+            G: (pixel & 0x00FF0000) >> 16,
+            B: (pixel & 0x0000FF00) >> 8
+        };
+    },
+
+    get width() {
+        return this._data.width;
+    },
+
+    get height() {
+        return this._data.height;
+    }
+
+};
+
+PNGIn.fromFile = function fromFile(filePath, callback) {
+    pngparse.parseFile(filePath, function(error, data) {
+        if (error) {
+            return callback(error, null);
+        }
+        callback(null, new PNGIn(data));
+    });
+};
+
+PNGIn.fromBuffer = function fromBuffer(buffer, callback) {
+    pngparse.parse(buffer, function(error, data) {
+        if (error) {
+            return callback(error, null);
+        }
+        callback(null, new PNGIn(data));
+    });
+};
+
+exports.PNGIn = PNGIn;
+
+function PNGOut(width, height) {
+    this._png = new PNG({
+        width: width,
+        height: height
+    });
+}
+
+PNGOut.prototype = {
+    constructor: PNGOut,
 
     getPixel: function(x, y) {
         var idx = this._getIdx(x, y);
@@ -50,37 +100,4 @@ PNGImage.prototype = {
     }
 };
 
-exports.fromFile = function(path, callback) {
-    var png = new PNG({
-        filterType: -1
-    });
-    var src = fs.createReadStream(path);
-
-    png.on('parsed', function() {
-        callback(null, new PNGImage(png));
-    });
-
-    png.on('error', function(error) {
-        callback(error, null);
-    });
-    src.pipe(png);
-};
-
-exports.fromBuffer = function(buffer, callback) {
-    var png = new PNG({
-        filterType: -1
-    });
-    png.parse(buffer, function(error) {
-        if (error) {
-            return callback(error, null);
-        }
-        callback(null, new PNGImage(png));
-    });
-};
-
-exports.createSync = function(width, height) {
-    return new PNGImage(new PNG({
-        width: width,
-        height: height
-    }));
-};
+exports.PNGOut = PNGOut;
