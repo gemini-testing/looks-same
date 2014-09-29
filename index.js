@@ -5,6 +5,10 @@ var parseColor = require('parse-color'),
     PNGIn = png.PNGIn,
     PNGOut = png.PNGOut;
 
+var JND = 2.3; //Just noticable difference
+                //if ciede2000 >= JND then colors
+                //difference is noticable by human eye
+
 function readPair(first, second, callback) {
     var src = {first: first, second: second},
         result = {first: null, second: null},
@@ -99,7 +103,7 @@ function areColorsLookSame(c1, c2) {
     var lab1 = colorDiff.rgb_to_lab(c1),
         lab2 = colorDiff.rgb_to_lab(c2);
 
-    return colorDiff.diff(lab1, lab2) < 2.3;
+    return colorDiff.diff(lab1, lab2) < JND;
 }
 
 function areColorsSame(c1, c2) {
