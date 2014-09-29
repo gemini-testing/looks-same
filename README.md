@@ -1,5 +1,7 @@
 # LooksSame
 
+[![Build Status](https://travis-ci.org/SevInf/looks-same.svg?branch=master)](https://travis-ci.org/SevInf/looks-same)
+
 Pure node.js library for comparing PNG-images, taking into account human color perception.
 It is created specially for the needs of visual regression testing for [`gemini`](http://github.com/bem/gemini)
 utility, but can be used for other purposes.
