@@ -1,6 +1,5 @@
 'use strict';
-var fs = require('fs'),
-    parseColor = require('parse-color'),
+var parseColor = require('parse-color'),
     colorDiff = require('color-diff'),
     PNGImage = require('./png');
 
@@ -31,7 +30,7 @@ function readPair(first, second, callback) {
     });
 }
 
-function forEachPixelPair(png1, png2, pixelCallback, endCallback) {
+function everyPixelPair(png1, png2, predicate, endCallback) {
     var width = Math.min(png1.width, png2.width),
         height = Math.min(png1.height, png2.height),
 
@@ -39,14 +38,18 @@ function forEachPixelPair(png1, png2, pixelCallback, endCallback) {
             setImmediate(function() {
                 for (var x = 0; x < width; x++) {
                     var color1 = png1.getPixel(x, y),
-                        color2 = png2.getPixel(x, y);
-                    pixelCallback(color1, color2, x, y);
+                        color2 = png2.getPixel(x, y),
+                        result = predicate(color1, color2, x, y);
+
+                    if (!result) {
+                        return endCallback(false);
+                    }
                 }
                 y++;
                 if (y < height) {
                     processRow(y);
                 } else {
-                    endCallback();
+                    endCallback(true);
                 }
             });
         };
@@ -54,21 +57,36 @@ function forEachPixelPair(png1, png2, pixelCallback, endCallback) {
     processRow(0);
 }
 
-function arePNGsLookSame(png1, png2, callback) {
+function arePNGsLookSame(png1, png2, opts, callback) {
     if (png1.width !== png2.width || png1.height !== png2.height) {
         return process.nextTick(function() {
             callback(false);
         });
     }
-    var result = true;
-    forEachPixelPair(png1, png2, function(color1, color2) {
-        if (!areColorsLookSame(color1, color2)) {
-            result = false;
+
+    var comparator = opts.strict? areColorsSame : areColorsLookSame;
+    if (opts.ignoreCaret) {
+        comparator = makeNoCaretColorComparator(comparator);
+    }
+
+    everyPixelPair(png1, png2, comparator, callback);
+}
+
+function makeNoCaretColorComparator(comparator) {
+    var prevFailure = null;
+    return function compareNoCaret(color1, color2, x, y) {
+        if (comparator(color1, color2)) {
             return true;
         }
-    }, function() {
-        callback(result);
-    });
+
+        if (prevFailure) {
+            if (x !== prevFailure.x || y !== prevFailure.y + 1) {
+                return false;
+            }
+        }
+        prevFailure = {x: x, y: y};
+        return true;
+    };
 }
 
 function areColorsLookSame(c1, c2) {
@@ -88,13 +106,17 @@ function areColorsSame(c1, c2) {
         c1.B === c2.B;
 }
 
-module.exports = exports = function looksSame(reference, image, callback) {
+module.exports = exports = function looksSame(reference, image, opts, callback) {
+    if (!callback) {
+        callback = opts;
+        opts = {};
+    }
     readPair(reference, image, function(error, result) {
         if (error) {
             return callback(error, null);
         }
 
-        arePNGsLookSame(result.first, result.second, function(result) {
+        arePNGsLookSame(result.first, result.second, opts, function(result) {
             callback(null, result);
         });
     });
@@ -106,12 +128,13 @@ function buildDiffImage(png1, png2, options, callback) {
         highlightColor = options.highlightColor,
         result = PNGImage.createSync(width, height);
 
-    forEachPixelPair(png1, png2, function(color1, color2, x, y) {
+    everyPixelPair(png1, png2, function(color1, color2, x, y) {
         if (!areColorsLookSame(color1, color2)) {
             result.setPixel(x, y, highlightColor);
         } else {
             result.setPixel(x, y, color1);
         }
+        return true;
     }, function() {
         callback(result);
     });

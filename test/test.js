@@ -54,6 +54,14 @@ describe('looksSame', function() {
             });
         });
 
+        it('should return false if difference is not seen by human eye and strict mode is enabled', function(done) {
+            looksSame(getImage('ref.png'), getImage('different-unnoticable.png'), {strict: true}, function(error, equal) {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(false);
+                done();
+            });
+        });
+
         it('should work when images width does not match', function(done) {
             looksSame(getImage('ref.png'), getImage('wide.png'), function(error, equal) {
                 expect(error).to.equal(null);
@@ -67,6 +75,50 @@ describe('looksSame', function() {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
+            });
+        });
+    });
+
+    describe('with ignoreCaret', function() {
+        forFilesAndBuffers(function(getImage) {
+            it('if disabled, should return false for images with caret', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('caret.png'), function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+
+            it('if enabled, should return true for images with caret', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('caret.png'), {ignoreCaret: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('if enabled, should return false if there is more difference, then caret', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('not-only-caret.png'), {ignoreCaret: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+
+            it('if enabled, should return false if there is more then one vertical lines', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('two-caret.png'), {ignoreCaret: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+
+            it('if enabled, should return false if the vertical line has holes in it', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('broken-caret.png'), {ignoreCaret: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
             });
         });
     });

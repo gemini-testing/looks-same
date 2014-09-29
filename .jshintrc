@@ -15,7 +15,7 @@
     "unused": "vars",
     "strict": true,
     "trailing": true,
-    "maxparams": 3,
+    "maxparams": 4,
     "node": true,
     "overrides": {
       "test/*": {"mocha": true},
