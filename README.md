@@ -43,7 +43,8 @@ looksSame.createDiff({
     reference: '/path/to/reference/image.png',
     current: '/path/to/reference/image.png',
     diff: '/path/to/save/diff/to.png',
-    highlightColor: '#ff00ff'
+    highlightColor: '#ff00ff' //color to highlight the differences
+    strict: true //strict comparsion
 }, function(error) {
 });
 ```

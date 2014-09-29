@@ -207,4 +207,35 @@ describe('createDiff', function() {
             });
         });
     });
+
+    it('should use non-strict comparator by default', function(done) {
+        var _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different-unnoticable.png'),
+            diff: this.tempName,
+            highlightColor: '#FF00FF'
+        }, function() {
+            looksSame(srcPath('ref.png'), _this.tempName, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
+    it('should use strict comparator if strict option is true', function(done) {
+        var _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different-unnoticable.png'),
+            diff: this.tempName,
+            strict: true,
+            highlightColor: '#FF00FF'
+        }, function() {
+            looksSame(imagePath('diffs/strict.png'), _this.tempName, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
 });

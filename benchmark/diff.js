@@ -16,7 +16,7 @@ function benchamrkDiff(title, refImage, currImage) {
 
         set('iterations', 1000);
         bench('looksSame', function(next) {
-            looksSame.saveDiff({
+            looksSame.createDiff({
                 reference: refImage,
                 current: currImage,
                 diff: path1,

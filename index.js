@@ -144,7 +144,7 @@ function buildDiffImage(png1, png2, options, callback) {
         var color1 = png1.getPixel(x, y),
             color2 = png2.getPixel(x, y);
 
-        if (!areColorsLookSame(color1, color2)) {
+        if (!options.comparator(color1, color2)) {
             result.setPixel(x, y, highlightColor);
         } else {
             result.setPixel(x, y, color1);
@@ -187,7 +187,8 @@ exports.createDiff = function saveDiff(opts, callback) {
             return callback(error);
         }
         var diffOptions = {
-                highlightColor: parseColorString(opts.highlightColor)
+                highlightColor: parseColorString(opts.highlightColor),
+                comparator: opts.strict? areColorsSame : areColorsLookSame
             };
 
         buildDiffImage(result.first, result.second, diffOptions, function(result) {
