@@ -39,7 +39,7 @@ Both `strict` and `ignoreCaret` can be set independently of one another.
 ## Building diff image
 
 ```javascript
-looksSame.buildDiff({
+looksSame.createDiff({
     reference: '/path/to/reference/image.png',
     current: '/path/to/reference/image.png',
     diff: '/path/to/save/diff/to.png',

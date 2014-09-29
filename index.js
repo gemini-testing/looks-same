@@ -181,7 +181,7 @@ function parseColorString(str) {
     };
 }
 
-exports.saveDiff = function saveDiff(opts, callback) {
+exports.createDiff = function saveDiff(opts, callback) {
     readPair(opts.reference, opts.current, function(error, result) {
         if (error) {
             return callback(error);

@@ -124,7 +124,7 @@ describe('looksSame', function() {
     });
 });
 
-describe('saveDiff', function() {
+describe('createDiff', function() {
     beforeEach(function() {
         this.tempName = temp.path({suffix: '.png'});
     });
@@ -137,7 +137,7 @@ describe('saveDiff', function() {
 
     it('should craate an image file a diff for for two images', function(done) {
         var _this = this;
-        looksSame.saveDiff({
+        looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
             diff: this.tempName,
@@ -150,7 +150,7 @@ describe('saveDiff', function() {
 
     it('should create a proper diff', function(done) {
         var _this = this;
-        looksSame.saveDiff({
+        looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
             diff: this.tempName,
@@ -165,7 +165,7 @@ describe('saveDiff', function() {
 
     it('should allow to change highlight color', function(done) {
         var _this = this;
-        looksSame.saveDiff({
+        looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
             diff: this.tempName,
@@ -180,7 +180,7 @@ describe('saveDiff', function() {
 
     it('should allow to build diff for taller images', function(done) {
         var _this = this;
-        looksSame.saveDiff({
+        looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('tall-different.png'),
             diff: this.tempName,
@@ -195,7 +195,7 @@ describe('saveDiff', function() {
 
     it('should allow to build diff for wider images', function(done) {
         var _this = this;
-        looksSame.saveDiff({
+        looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('wide-different.png'),
             diff: this.tempName,
