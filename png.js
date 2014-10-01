@@ -13,9 +13,9 @@ PNGIn.prototype = {
     getPixel: function(x, y) {
         var pixel = this._data.getPixel(x, y);
         return {
-            R: (pixel & 0xFF000000) >> 24,
-            G: (pixel & 0x00FF0000) >> 16,
-            B: (pixel & 0x0000FF00) >> 8
+            R: (pixel & 0xFF000000) >>> 24,
+            G: (pixel & 0x00FF0000) >>> 16,
+            B: (pixel & 0x0000FF00) >>> 8
         };
     },
 
