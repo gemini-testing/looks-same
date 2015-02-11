@@ -29,6 +29,16 @@ function forFilesAndBuffers(callback) {
 }
 
 describe('looksSame', function() {
+    it('should throw if both tolerance and strict options set', function() {
+        expect(function() {
+            looksSame(srcPath('ref.png'), srcPath('same.png'), {
+                strict: true,
+                tolerance: 9000
+            }, function() {
+            });
+        }).to.throw(TypeError);
+    });
+
     forFilesAndBuffers(function(getImage) {
         it('should return true for similar images', function(done) {
             looksSame(getImage('ref.png'), getImage('same.png'), function(error, equal) {
@@ -42,6 +52,14 @@ describe('looksSame', function() {
             looksSame(getImage('ref.png'), getImage('different.png'), function(error, equal) {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
+                done();
+            });
+        });
+
+        it('should return true for different images when tolerance is higher than difference', function(done) {
+            looksSame(getImage('ref.png'), getImage('different.png'), {tolerance: 50}, function(error, equal) {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(true);
                 done();
             });
         });
@@ -135,7 +153,50 @@ describe('createDiff', function() {
         }
     });
 
-    it('should craate an image file a diff for for two images', function(done) {
+    it('should throw if both tolerance and strict options set', function() {
+        expect(function() {
+            looksSame.createDiff({
+                reference: srcPath('ref.png'),
+                current: srcPath('different.png'),
+                diff: this.tempName,
+                highlightColor: '#ff00ff',
+                tolerance: 9000,
+                strict: true
+            }, function() {
+            });
+        }).to.throw(TypeError);
+    });
+
+    it('should copy a reference image if there is no difference', function(done) {
+        var _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('same.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        }, function() {
+            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
+    it('should create an image file a diff for for two images', function(done) {
+        var _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            tolerance: 50
+        }, function() {
+            expect(fs.existsSync(_this.tempName)).to.equal(true);
+            done();
+        });
+    });
+
+    it('should ignore the differences lower then tolerance', function(done) {
         var _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
@@ -143,8 +204,10 @@ describe('createDiff', function() {
             diff: this.tempName,
             highlightColor: '#ff00ff'
         }, function() {
-            expect(fs.existsSync(_this.tempName)).to.equal(true);
-            done();
+            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, function(error, equal) {
+                expect(equal).to.equal(true);
+                done();
+            });
         });
     });
 
