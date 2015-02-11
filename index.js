@@ -70,7 +70,7 @@ function arePNGsLookSame(png1, png2, opts, callback) {
         });
     }
 
-    var comparator = opts.strict? areColorsSame : areColorsLookSame;
+    var comparator = opts.strict? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
     if (opts.ignoreCaret) {
         comparator = makeNoCaretColorComparator(comparator);
     }
@@ -81,7 +81,7 @@ function arePNGsLookSame(png1, png2, opts, callback) {
 function makeNoCaretColorComparator(comparator) {
     var prevFailure = null;
     return function compareNoCaret(color1, color2, x, y) {
-        if (comparator(color1, color2)) {
+        if (comparator(color1, color2, x, y)) {
             return true;
         }
 
@@ -95,15 +95,17 @@ function makeNoCaretColorComparator(comparator) {
     };
 }
 
-function areColorsLookSame(c1, c2) {
-    if (areColorsSame(c1, c2)) {
-        return true;
-    }
-    /*jshint camelcase:false*/
-    var lab1 = colorDiff.rgb_to_lab(c1),
-        lab2 = colorDiff.rgb_to_lab(c2);
+function makeCIEDE2000Comparator(tolerance) {
+    return function doColorsLookSame(c1, c2) {
+        if (areColorsSame(c1, c2)) {
+            return true;
+        }
+        /*jshint camelcase:false*/
+        var lab1 = colorDiff.rgb_to_lab(c1),
+            lab2 = colorDiff.rgb_to_lab(c2);
 
-    return colorDiff.diff(lab1, lab2) < JND;
+        return colorDiff.diff(lab1, lab2) < tolerance;
+    };
 }
 
 function areColorsSame(c1, c2) {
@@ -117,6 +119,9 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         callback = opts;
         opts = {};
     }
+
+    opts.tolerance = getToleranceFromOpts(opts);
+
     readPair(reference, image, function(error, result) {
         if (error) {
             return callback(error, null);
@@ -182,13 +187,15 @@ function parseColorString(str) {
 }
 
 exports.createDiff = function saveDiff(opts, callback) {
+    var tolerance = getToleranceFromOpts(opts);
+
     readPair(opts.reference, opts.current, function(error, result) {
         if (error) {
             return callback(error);
         }
         var diffOptions = {
                 highlightColor: parseColorString(opts.highlightColor),
-                comparator: opts.strict? areColorsSame : areColorsLookSame
+                comparator: opts.strict? areColorsSame : makeCIEDE2000Comparator(tolerance)
             };
 
         buildDiffImage(result.first, result.second, diffOptions, function(result) {
@@ -196,3 +203,13 @@ exports.createDiff = function saveDiff(opts, callback) {
         });
     });
 };
+
+function getToleranceFromOpts(opts) {
+    if ('tolerance' in opts) {
+        if ('strict' in opts) {
+            throw new TypeError('Unable to use "strict" and "tolerance" options together');
+        }
+        return opts.tolerance;
+    }
+    return JND;
+}
