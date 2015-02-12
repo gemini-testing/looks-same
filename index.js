@@ -206,7 +206,7 @@ exports.createDiff = function saveDiff(opts, callback) {
 
 function getToleranceFromOpts(opts) {
     if ('tolerance' in opts) {
-        if ('strict' in opts) {
+        if (opts.strict) {
             throw new TypeError('Unable to use "strict" and "tolerance" options together');
         }
         return opts.tolerance;
