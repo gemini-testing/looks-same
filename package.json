@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SevInf/looks-same.git"
+    "url": "https://github.com/gemini-testing/looks-same.git"
   },
   "keywords": [
     "png",
@@ -36,7 +36,7 @@
     "diff"
   ],
   "bugs": {
-    "url": "https://github.com/SevInf/looks-same/issues"
+    "url": "https://github.com/gemini-testing/looks-same/issues"
   },
-  "homepage": "https://github.com/SevInf/looks-same"
+  "homepage": "https://github.com/gemini-testing/looks-same"
 }
