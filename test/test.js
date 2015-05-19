@@ -95,6 +95,20 @@ describe('looksSame', function() {
                 done();
             });
         });
+
+        [
+            'red',
+            'blue',
+            'green'
+        ].forEach(function(channel) {
+            it('should report image as different if the difference is only in ' + channel + ' channel', function(done) {
+                looksSame(getImage('ref.png'), getImage(channel + '.png'), function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+        });
     });
 
     describe('with ignoreCaret', function() {
@@ -189,7 +203,6 @@ describe('createDiff', function() {
             current: srcPath('different.png'),
             diff: this.tempName,
             highlightColor: '#ff00ff',
-            tolerance: 50
         }, function() {
             expect(fs.existsSync(_this.tempName)).to.equal(true);
             done();
@@ -202,7 +215,8 @@ describe('createDiff', function() {
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
             diff: this.tempName,
-            highlightColor: '#ff00ff'
+            highlightColor: '#ff00ff',
+            tolerance: 50
         }, function() {
             looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, function(error, equal) {
                 expect(equal).to.equal(true);
