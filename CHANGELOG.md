@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0 - 2015-07-14
+
+* Fix critical bug in color comparison algorithm.
+Published as 2.0.0 because the result of the comparison
+will change for many images and affect the dependencies.
+
 ## 1.1.1 - 2015-02-12
 
 * Setting both `tolerance` and `strict` fails
