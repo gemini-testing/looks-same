@@ -1,7 +1,8 @@
 'use strict';
 var fs = require('fs'),
     pngparse = require('pngparse'),
-    PNG = require('pngjs').PNG;
+    PNG = require('pngjs').PNG,
+    concat = require('concat-stream');
 
 function PNGIn(data) {
     this._data = data;
@@ -97,6 +98,18 @@ PNGOut.prototype = {
         writeStream.on('finish', function() {
             callback(null);
         });
+    },
+
+    createBuffer: function(callback) {
+        this._png.pack().pipe(concat(gotDiff));
+
+        this._png.on('error', function(error) {
+            callback(error, null);
+        });
+
+        function gotDiff(data) {
+            callback(null, data);
+        }
     }
 };
 
