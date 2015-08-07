@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0 - 2015-08-07
+
+* Allow to receive diff image as a Buffer (@flore77).
+
 ## 2.0.0 - 2015-07-14
 
 * Fix critical bug in color comparison algorithm.
