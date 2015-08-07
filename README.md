@@ -57,7 +57,7 @@ Both `strict` and `ignoreCaret` can be set independently of one another.
 ```javascript
 looksSame.createDiff({
     reference: '/path/to/reference/image.png',
-    current: '/path/to/reference/image.png',
+    current: '/path/to/current/image.png',
     diff: '/path/to/save/diff/to.png',
     highlightColor: '#ff00ff', //color to highlight the differences
     strict: false,//strict comparsion
