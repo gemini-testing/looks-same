@@ -65,3 +65,17 @@ looksSame.createDiff({
 }, function(error) {
 });
 ```
+
+## Building diff image as a Buffer
+
+If you don't want the diff image to be written on disk, then simply **don't**
+pass any `diff: path` to the `createDiff` method. The callback will then
+receive a `Buffer` containing the diff as the 2nd argument.
+
+```javascript
+looksSame.createDiff({
+    //exactly same options as above, but without diff
+}, function(error, buffer) {
+    ...
+});
+```

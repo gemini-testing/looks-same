@@ -315,4 +315,28 @@ describe('createDiff', function() {
             });
         });
     });
+
+    it('should return a buffer if no diff path option is specified', function(done) {
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            highlightColor: '#ff00ff',
+        }, function(error, buffer) {
+            expect(buffer).to.be.an.instanceof(Buffer);
+            done();
+        });
+    });
+
+    it('should return a buffer equal to the diff on disk', function(done) {
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            highlightColor: '#ff00ff',
+        }, function(error, buffer) {
+            looksSame(imagePath('diffs/small-magenta.png'), buffer, function(error, equal) {
+                expect(equal).to.be.equal(true);
+                done();
+            });
+        });
+    });
 });
