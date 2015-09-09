@@ -79,3 +79,15 @@ looksSame.createDiff({
     ...
 });
 ```
+
+## Comparing colors
+
+If you just need to compare two colors you can use `colors` function:
+
+```javascript
+looksSame.colors(
+    {R: 255, G: 0, B: 0},
+    {R: 254, G: 1, B: 1},
+    {tolerance: 2.5}
+);
+```

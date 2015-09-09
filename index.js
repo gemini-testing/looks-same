@@ -217,3 +217,12 @@ function getToleranceFromOpts(opts) {
     }
     return JND;
 }
+
+exports.colors = function(color1, color2, opts) {
+    opts = opts || {};
+    if (opts.tolerance === undefined) {
+        opts.tolerance = JND;
+    }
+    var comparator = makeCIEDE2000Comparator(opts.tolerance);
+    return comparator(color1, color2);
+};
