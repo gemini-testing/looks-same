@@ -340,3 +340,52 @@ describe('createDiff', function() {
         });
     });
 });
+
+describe('colors', function() {
+    it('should return true for same colors', function() {
+        expect(
+            looksSame.colors(
+                {R: 255, G: 0, B: 0},
+                {R: 255, G: 0, B: 0}
+            )
+        ).to.be.equal(true);
+    });
+
+    it('should return false for different colors', function() {
+        expect(
+            looksSame.colors(
+                {R: 255, G: 0, B: 0},
+                {R: 0, G: 0, B: 255}
+            )
+        ).to.be.equal(false);
+    });
+
+    it('should return true for similar colors', function() {
+        expect(
+            looksSame.colors(
+                {R: 255, G: 0, B: 0},
+                {R: 254, G: 1, B: 1}
+            )
+        ).to.be.equal(true);
+    });
+
+    it('should return false for similar colors if tolerance is low enough', function() {
+        expect(
+            looksSame.colors(
+                {R: 255, G: 0, B: 0},
+                {R: 254, G: 1, B: 1},
+                {tolerance: 0.0}
+            )
+        ).to.be.equal(false);
+    });
+
+    it('should return true for different colors if tolerance is high enough', function() {
+        expect(
+            looksSame.colors(
+                {R: 255, G: 0, B: 0},
+                {R: 0, G: 0, B: 255},
+                {tolerance: 55.0}
+            )
+        ).to.be.equal(true);
+    });
+});
