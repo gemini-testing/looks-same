@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0 - 2015-09-11
+
+* Expose color comparsion function `looksSame.colors` (@SevInf).
+
 ## 2.1.0 - 2015-08-07
 
 * Allow to receive diff image as a Buffer (@flore77).
