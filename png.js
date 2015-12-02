@@ -1,115 +1,83 @@
 'use strict';
 var fs = require('fs'),
-    pngparse = require('pngparse'),
-    PNG = require('pngjs').PNG,
-    concat = require('concat-stream');
+    lodepng = require('lodepng');
 
-function PNGIn(data) {
-    this._data = data;
+function getIdx(imageData, x, y) {
+  return (imageData.width * y + x) * 4;
+}
+
+function getPixel(imageData, x, y) {
+    var idx = getIdx(imageData, x, y);
+    return {
+        R: imageData.data[idx],
+        G: imageData.data[idx + 1],
+        B: imageData.data[idx + 2]
+    };
+}
+
+function PNGIn(imageData) {
+    this.width = imageData.width;
+    this.height = imageData.height;
+    this.data = imageData.data;
 }
 
 PNGIn.prototype = {
     constructor: PNGIn,
 
     getPixel: function(x, y) {
-        var pixel = this._data.getPixel(x, y);
-        return {
-            R: (pixel & 0xFF000000) >>> 24,
-            G: (pixel & 0x00FF0000) >>> 16,
-            B: (pixel & 0x0000FF00) >>> 8
-        };
-    },
-
-    get width() {
-        return this._data.width;
-    },
-
-    get height() {
-        return this._data.height;
+        return getPixel(this, x, y);
     }
-
 };
 
 PNGIn.fromFile = function fromFile(filePath, callback) {
-    pngparse.parseFile(filePath, function(error, data) {
-        if (error) {
-            return callback(error, null);
-        }
-        callback(null, new PNGIn(data));
+    fs.readFile(filePath, function (err, raw) {
+      if (err) return callback(err);
+
+      PNGIn.fromBuffer(raw, callback);
     });
 };
 
 PNGIn.fromBuffer = function fromBuffer(buffer, callback) {
-    pngparse.parse(buffer, function(error, data) {
-        if (error) {
-            return callback(error, null);
-        }
-        callback(null, new PNGIn(data));
+    lodepng.decode(buffer, function (err, imageData) {
+      if (err) return callback(err);
+
+      callback(null, new PNGIn(imageData));
     });
 };
 
 exports.PNGIn = PNGIn;
 
 function PNGOut(width, height) {
-    this._png = new PNG({
-        width: width,
-        height: height
-    });
+    this.width = width;
+    this.height = height;
+    this.data = new Uint8ClampedArray(width * height * 4);
 }
 
 PNGOut.prototype = {
     constructor: PNGOut,
 
     getPixel: function(x, y) {
-        var idx = this._getIdx(x, y);
-        return {
-            R: this._png.data[idx],
-            G: this._png.data[idx + 1],
-            B: this._png.data[idx + 2]
-        };
-    },
-
-    get width() {
-        return this._png.width;
-    },
-
-    get height() {
-        return this._png.height;
+        return getPixel(this, x, y);
     },
 
     setPixel: function(x, y, color) {
-        var idx = this._getIdx(x, y);
-        this._png.data[idx] = color.R;
-        this._png.data[idx + 1] = color.G;
-        this._png.data[idx + 2] = color.B;
-        this._png.data[idx + 3] = 255;
-    },
-
-    _getIdx: function(x, y) {
-        return (this._png.width * y + x) * 4;
+        var idx = getIdx(this, x, y);
+        this.data[idx] = color.R;
+        this.data[idx + 1] = color.G;
+        this.data[idx + 2] = color.B;
+        this.data[idx + 3] = 255;
     },
 
     save: function(path, callback) {
-        var writeStream = fs.createWriteStream(path);
-        this._png.pack().pipe(writeStream);
-        writeStream.on('error', function(error) {
-            callback(error);
-        });
-        writeStream.on('finish', function() {
-            callback(null);
+        lodepng.encode(this, function (err, raw) {
+            if (err) return callback(err);
+
+            fs.writeFile(path, raw, callback);
         });
     },
 
     createBuffer: function(callback) {
-        this._png.pack().pipe(concat(gotDiff));
-
-        this._png.on('error', function(error) {
-            callback(error, null);
-        });
-
-        function gotDiff(data) {
-            callback(null, data);
-        }
+        lodepng.encode(this, callback);
     }
 };
 
