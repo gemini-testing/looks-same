@@ -2,9 +2,10 @@
 
 [![Build Status](https://travis-ci.org/gemini-testing/looks-same.svg?branch=master)](https://travis-ci.org/gemini-testing/looks-same)
 
-Pure node.js library for comparing PNG-images, taking into account human color perception.
-It is created specially for the needs of visual regression testing for [`gemini`](http://github.com/gemini-testing/gemini)
-utility, but can be used for other purposes.
+Node.js library for comparing PNG-images, taking into account human color
+perception. It is created specially for the needs of visual regression testing
+for [`gemini`](http://github.com/gemini-testing/gemini) utility, but can be used
+for other purposes.
 
 ## Comparing images
 
