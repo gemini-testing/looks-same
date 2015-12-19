@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.2 - 2015-12-19
+
+* Use `pngjs2` instead of `lodepng` (@SevInf).
+
 ## 2.2.1 - 2015-09-11
 
 * Use `lodepng` for png encoding/decoding (@LinusU).
