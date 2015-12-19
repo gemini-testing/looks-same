@@ -1,9 +1,7 @@
 'use strict';
 var parseColor = require('parse-color'),
     colorDiff = require('color-diff'),
-    png = require('./png'),
-    PNGIn = png.PNGIn,
-    PNGOut = png.PNGOut;
+    png = require('./png');
 
 var JND = 2.3; //Just noticable difference
                 //if ciede2000 >= JND then colors
@@ -17,7 +15,7 @@ function readPair(first, second, callback) {
 
     ['first', 'second'].forEach(function(key) {
         var source = src[key],
-            readFunc = Buffer.isBuffer(source)? PNGIn.fromBuffer : PNGIn.fromFile;
+            readFunc = Buffer.isBuffer(source)? png.fromBuffer : png.fromFile;
 
         readFunc(source, function(error, png) {
             if (failed) {
@@ -139,7 +137,7 @@ function buildDiffImage(png1, png2, options, callback) {
         minWidth = Math.min(png1.width, png2.width),
         minHeight = Math.min(png1.height, png2.height),
         highlightColor = options.highlightColor,
-        result = new PNGOut(width, height);
+        result = png.empty(width, height);
 
     iterateRect(width, height, function(x, y) {
         if (x >= minWidth || y >= minHeight) {
