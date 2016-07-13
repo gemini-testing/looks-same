@@ -109,6 +109,14 @@ describe('looksSame', function() {
                 });
             });
         });
+
+        it('should return false for images which differ from each other only by 1 pixel', function(done) {
+            looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), function(error, equal) {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(false);
+                done();
+            });
+        });
     });
 
     describe('with ignoreCaret', function() {
@@ -125,30 +133,6 @@ describe('looksSame', function() {
                 looksSame(getImage('no-caret.png'), getImage('caret.png'), {ignoreCaret: true}, function(error, equal) {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
-                    done();
-                });
-            });
-
-            it('if enabled, should return false if there is more difference, then caret', function(done) {
-                looksSame(getImage('no-caret.png'), getImage('not-only-caret.png'), {ignoreCaret: true}, function(error, equal) {
-                    expect(error).to.equal(null);
-                    expect(equal).to.equal(false);
-                    done();
-                });
-            });
-
-            it('if enabled, should return false if there is more then one vertical lines', function(done) {
-                looksSame(getImage('no-caret.png'), getImage('two-caret.png'), {ignoreCaret: true}, function(error, equal) {
-                    expect(error).to.equal(null);
-                    expect(equal).to.equal(false);
-                    done();
-                });
-            });
-
-            it('if enabled, should return false if the vertical line has holes in it', function(done) {
-                looksSame(getImage('no-caret.png'), getImage('broken-caret.png'), {ignoreCaret: true}, function(error, equal) {
-                    expect(error).to.equal(null);
-                    expect(equal).to.equal(false);
                     done();
                 });
             });

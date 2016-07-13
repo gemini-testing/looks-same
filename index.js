@@ -1,7 +1,8 @@
 'use strict';
 var parseColor = require('parse-color'),
     colorDiff = require('color-diff'),
-    png = require('./png');
+    png = require('./lib/png'),
+    IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
 
 var JND = 2.3; //Just noticable difference
                 //if ciede2000 >= JND then colors
@@ -70,27 +71,15 @@ function arePNGsLookSame(png1, png2, opts, callback) {
 
     var comparator = opts.strict? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
     if (opts.ignoreCaret) {
-        comparator = makeNoCaretColorComparator(comparator);
+        comparator = makeNoCaretColorComparator(comparator, opts.pixelRatio);
     }
 
     everyPixelPair(png1, png2, comparator, callback);
 }
 
-function makeNoCaretColorComparator(comparator) {
-    var prevFailure = null;
-    return function compareNoCaret(color1, color2, x, y) {
-        if (comparator(color1, color2, x, y)) {
-            return true;
-        }
-
-        if (prevFailure) {
-            if (x !== prevFailure.x || y !== prevFailure.y + 1) {
-                return false;
-            }
-        }
-        prevFailure = {x: x, y: y};
-        return true;
-    };
+function makeNoCaretColorComparator(comparator, pixelRatio) {
+    const caretComparator = new IgnoreCaretComparator(comparator, pixelRatio);
+    return (color1, color2, x, y) => caretComparator.compare(color1, color2, x, y);
 }
 
 function makeCIEDE2000Comparator(tolerance) {
