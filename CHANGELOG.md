@@ -2,8 +2,8 @@
 
 ## 2.3.0 - 2016-07-13
 
-* Allow to pass `pixelRatio` option
-* Change set of testing environments in Travis CI
+* Allow to pass `pixelRatio` option (@tormozz48)
+* Change set of testing environments in Travis CI (@tormozz48)
 
 ## 2.2.2 - 2015-12-19
 
