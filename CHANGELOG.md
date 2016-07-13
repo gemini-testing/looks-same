@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0 - 2016-07-13
+
+* Allow to pass `pixelRatio` option
+* Change set of testing environments in Travis CI
+
 ## 2.2.2 - 2015-12-19
 
 * Use `pngjs2` instead of `lodepng` (@SevInf).
