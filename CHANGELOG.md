@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0 - 2016-07-13
+
+* Remove support for 0.10 and 0.12 NodeJS versions.
+* Fix ignore caret on devices with `pixelRatio` > 1.
+* Fix bug with the missed 1px diff between images when `ignoreCaret` option is enabled.
+
 ## 2.2.2 - 2015-12-19
 
 * Use `pngjs2` instead of `lodepng` (@SevInf).

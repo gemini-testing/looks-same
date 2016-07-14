@@ -23,6 +23,9 @@
     "test": "mocha",
     "bench": "matcha benchmark/*"
   },
+  "engines": {
+    "node": ">= 4.0"
+  },
   "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
   "license": "MIT",
   "repository": {
