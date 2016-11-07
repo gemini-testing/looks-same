@@ -44,7 +44,10 @@ function everyPixelPair(png1, png2, predicate, endCallback) {
                 for (var x = 0; x < width; x++) {
                     var color1 = png1.getPixel(x, y),
                         color2 = png2.getPixel(x, y),
-                        result = predicate(color1, color2, x, y);
+                        result = predicate({
+                            color1, color2,
+                            x, y
+                        });
 
                     if (!result) {
                         return endCallback(false);
@@ -79,26 +82,28 @@ function arePNGsLookSame(png1, png2, opts, callback) {
 
 function makeNoCaretColorComparator(comparator, pixelRatio) {
     const caretComparator = new IgnoreCaretComparator(comparator, pixelRatio);
-    return (color1, color2, x, y) => caretComparator.compare(color1, color2, x, y);
+    return (data) => caretComparator.compare(data);
 }
 
 function makeCIEDE2000Comparator(tolerance) {
-    return function doColorsLookSame(c1, c2) {
-        if (areColorsSame(c1, c2)) {
+    return function doColorsLookSame(data) {
+        if (areColorsSame(data)) {
             return true;
         }
         /*jshint camelcase:false*/
-        var lab1 = colorDiff.rgb_to_lab(c1),
-            lab2 = colorDiff.rgb_to_lab(c2);
+        var lab1 = colorDiff.rgb_to_lab(data.color1),
+            lab2 = colorDiff.rgb_to_lab(data.color2);
 
         return colorDiff.diff(lab1, lab2) < tolerance;
     };
 }
 
-function areColorsSame(c1, c2) {
-    return c1.R === c2.R &&
-        c1.G === c2.G &&
-        c1.B === c2.B;
+function areColorsSame(data) {
+    const c1 = data.color1;
+    const c2 = data.color2;
+    return c1.R === c2.R
+        && c1.G === c2.G
+        && c1.B === c2.B;
 }
 
 module.exports = exports = function looksSame(reference, image, opts, callback) {
@@ -136,7 +141,7 @@ function buildDiffImage(png1, png2, options, callback) {
         var color1 = png1.getPixel(x, y),
             color2 = png2.getPixel(x, y);
 
-        if (!options.comparator(color1, color2)) {
+        if (!options.comparator({color1, color2})) {
             result.setPixel(x, y, highlightColor);
         } else {
             result.setPixel(x, y, color1);
@@ -211,5 +216,5 @@ exports.colors = function(color1, color2, opts) {
         opts.tolerance = JND;
     }
     var comparator = makeCIEDE2000Comparator(opts.tolerance);
-    return comparator(color1, color2);
+    return comparator({color1, color2});
 };

@@ -122,7 +122,7 @@ function expectDeclined(params, pixels) {
 }
 
 function execComparator(params, pixels) {
-    const colorComparator = (color) => !color;
+    const colorComparator = (data) => !data.color1;
     const ignoreCaretComparator = new IgnoreCaretComparator(colorComparator, params.pixelRatio);
     return comparePixels(pixels, ignoreCaretComparator.compare.bind(ignoreCaretComparator));
 }
@@ -131,7 +131,7 @@ function comparePixels(pixels, comparator) {
     let res = true;
     for(let y=0; y<pixels.length; ++y) {
         for(let x=0; x<pixels[y].length; ++x) {
-            res = comparator(pixels[y][x], null, x, y);
+            res = comparator({color1: pixels[y][x], x, y});
             if(!res) {
                 break;
             }
