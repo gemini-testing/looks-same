@@ -2,7 +2,8 @@
 var parseColor = require('parse-color'),
     colorDiff = require('color-diff'),
     png = require('./lib/png'),
-    IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
+    IgnoreCaretComparator = require('./lib/ignore-caret-comparator'),
+    AntialiasingComparator = require('./lib/antialiasing-comparator');
 
 var JND = 2.3; //Just noticable difference
                 //if ciede2000 >= JND then colors
@@ -46,7 +47,8 @@ function everyPixelPair(png1, png2, predicate, endCallback) {
                         color2 = png2.getPixel(x, y),
                         result = predicate({
                             color1, color2,
-                            x, y
+                            x, y,
+                            width, height
                         });
 
                     if (!result) {
@@ -73,11 +75,20 @@ function arePNGsLookSame(png1, png2, opts, callback) {
     }
 
     var comparator = opts.strict? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
+    if (opts.ignoreAntialiasing) {
+        comparator = makeAntialiasingComparator(comparator, png1, png2);
+    }
+
     if (opts.ignoreCaret) {
         comparator = makeNoCaretColorComparator(comparator, opts.pixelRatio);
     }
 
     everyPixelPair(png1, png2, comparator, callback);
+}
+
+function makeAntialiasingComparator(comparator, png1, png2) {
+    const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2);
+    return (data) => antialiasingComparator.compare(data);
 }
 
 function makeNoCaretColorComparator(comparator, pixelRatio) {
@@ -113,6 +124,10 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
     }
 
     opts.tolerance = getToleranceFromOpts(opts);
+
+    if (opts.ignoreAntialiasing === undefined) {
+        opts.ignoreAntialiasing = true;
+    }
 
     readPair(reference, image, function(error, result) {
         if (error) {

@@ -54,11 +54,19 @@ looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, equal
 Both `strict` and `ignoreCaret` can be set independently of one another.
 
 Some devices can have different proportion between physical and logical screen resolutions also
-known as `pixel ratio`. Default value for this proportion is 1. 
+known as `pixel ratio`. Default value for this proportion is 1.
 This param also affects the comparison result, so it can be set manually with `pixelRatio` option.
 
 ```javascript
 looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, equal) {
+    ...
+});
+```
+
+Some images has difference while comparing because of antialiasing. These diffs will be ignored by default. You can use `ignoreAntialiasing` option with `false` value to disable ignoring such diffs. In that way antialiased pixels will be marked as diffs. Read more about [anti-aliasing algorithm](http://www.eejournal.ktu.lt/index.php/elt/article/view/10058/5000).
+
+```javascript
+looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, equal) {
     ...
 });
 ```
