@@ -136,6 +136,62 @@ describe('looksSame', function() {
                     done();
                 });
             });
+
+            it('if enabled, should return true for images with caret and antialiased pixels', function(done) {
+                const opts = {
+                    ignoreCaret: true,
+                    ignoreAntialiasing: true
+                };
+                looksSame(getImage('caret+antialiasing.png'), getImage('no-caret+antialiasing.png'), opts, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('if enabled, should return false for images with 1px diff', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('with antialiasing', function() {
+        forFilesAndBuffers(function(getImage) {
+            it('should check images for antialiasing by default', function(done) {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('if disabled, should return false for images with antialiasing', function(done) {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: false}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
+
+            it('if enabled, should return true for images with antialiasing', function(done) {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('should return false for images which differ even with ignore antialiasing option', function(done) {
+                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), {ignoreAntialiasing: true}, function(error, equal) {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(false);
+                    done();
+                });
+            });
         });
     });
 });
