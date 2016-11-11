@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0 - 2016-11-11
+
+* Add `ignoreAntialiasing` option to ignore diffs with anti-aliased pixels. Enabled by default.
+
 ## 3.0.0 - 2016-07-13
 
 * Remove support for 0.10 and 0.12 NodeJS versions.
