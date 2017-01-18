@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0 - 2017-01-18
+
+* Add ability to ignore caret when it is crossing with text
+
 ## 3.1.0 - 2016-11-11
 
 * Add `ignoreAntialiasing` option to ignore diffs with anti-aliased pixels. Enabled by default.
