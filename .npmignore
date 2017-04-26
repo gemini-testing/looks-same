@@ -1,6 +1,3 @@
-.gitignore
-.jshintignore
-.jshintrc
-.npmignore
+**/.*
 test/
 coverage/
