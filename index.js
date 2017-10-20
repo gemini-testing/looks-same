@@ -77,6 +77,7 @@ const buildDiffImage = async (img1, img2, options) => {
     const minHeight = Math.min(img1.height, img2.height);
 
     const highlightColor = options.highlightColor;
+    const alphaLevel = isNaN(options.transparency) ? 255 : options.transparency;
     const resultBuffer = Buffer.alloc(width * height * 3);
 
     const setPixel = (buf, x, y, {R, G, B}) => {
@@ -98,7 +99,7 @@ const buildDiffImage = async (img1, img2, options) => {
         if (!options.comparator({color1, color2, img1, img2, x, y, width, height})) {
             setPixel(resultBuffer, x, y, highlightColor);
         } else {
-            setPixel(resultBuffer, x, y, color1);
+            setPixel(resultBuffer, x, y, color1, alphaLevel);
         }
     });
 
