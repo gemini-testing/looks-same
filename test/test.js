@@ -6,6 +6,9 @@ const temp = require('temp');
 const expect = require('chai').expect;
 
 const looksSame = require('..');
+const png = require('../lib/png');
+const {readPair, getDiffPixelsCoords} = require('../lib/utils');
+const areColorsSame = require('../lib/same-colors');
 
 const imagePath = (name) => path.join(__dirname, 'data', name);
 
@@ -21,7 +24,7 @@ const forFilesAndBuffers = (callback) => {
     describe('with buffers as arguments', () => {
         callback(readImage);
     });
-}
+};
 
 describe('looksSame', () => {
     it('should throw if both tolerance and strict options set', () => {
@@ -428,5 +431,72 @@ describe('colors', () => {
                 {tolerance: 55.0}
             )
         ).to.be.equal(true);
+    });
+});
+
+describe('getDiffArea', () => {
+    it('should return null for similar images', (done) => {
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), (error, result) => {
+            expect(error).to.equal(null);
+            expect(result).to.equal(null);
+            done();
+        });
+    });
+
+    it('should return null for different images when tolerance is higher than difference', (done) => {
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('different.png'), {tolerance: 50}, (error, result) => {
+            expect(error).to.equal(null);
+            expect(result).to.equal(null);
+            done();
+        });
+    });
+
+    it('should return correct diff area for different images', (done) => {
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('different.png'), (error, result) => {
+            expect(error).to.equal(null);
+            expect(result.width).to.equal(50);
+            expect(result.height).to.equal(30);
+            expect(result.topleft).to.deep.equal([0, 10]);
+            done();
+        });
+    });
+
+    it('should return sizes of a bigger image if images have different sizes', (done) => {
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('large-different.png'), (error, result) => {
+            expect(error).to.equal(null);
+            expect(result.width).to.equal(500);
+            expect(result.height).to.equal(500);
+            expect(result.topleft).to.deep.equal([0, 0]);
+            done();
+        });
+    });
+
+    it('should return correct width and height for images that differ from each other exactly by 1 pixel', (done) => {
+        looksSame.getDiffArea(srcPath('no-caret.png'), srcPath('1px-diff.png'), (error, result) => {
+            expect(error).to.equal(null);
+            expect(result.width).to.equal(1);
+            expect(result.height).to.equal(1);
+            done();
+        });
+    });
+});
+
+describe('getDiffPixelsCoords', () => {
+    it('should return first non-matching pixel by default', (done) => {
+        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, {first, second}) {
+            const result = getDiffPixelsCoords(first, second, areColorsSame);
+
+            expect(result.length).to.equal(1);
+            done();
+        });
+    });
+
+    it('should return all non-matching pixels if asked for', (done) => {
+        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, {first, second}) {
+            const result = getDiffPixelsCoords(first, second, areColorsSame, false);
+
+            expect(result.length).to.equal(302);
+            done();
+        });
     });
 });
