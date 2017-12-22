@@ -7,7 +7,9 @@ const png = require('./lib/png');
 const areColorsSame = require('./lib/same-colors');
 const AntialiasingComparator = require('./lib/antialiasing-comparator');
 const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
-const {readPair, getDiffPixelsCoords} = require('./lib/utils');
+const utils = require('./lib/utils');
+const readPair = utils.readPair;
+const getDiffPixelsCoords = utils.getDiffPixelsCoords;
 
 const JND = 2.3; //Just noticable difference
                 //if ciede2000 >= JND then colors
@@ -22,16 +24,16 @@ const getDiffArea = (diffPixelsCoords) => {
         ys.push(coords[1]);
     });
 
-    const top = Math.min(...ys);
-    const bottom = Math.max(...ys);
+    const top = Math.min.apply(Math, ys);
+    const bottom = Math.max.apply(Math, ys);
 
-    const leftmost = Math.min(...xs);
-    const rightmost = Math.max(...xs);
+    const left = Math.min.apply(Math, xs);
+    const right = Math.max.apply(Math, xs);
 
-    const width = (rightmost - leftmost) + 1;
+    const width = (right - left) + 1;
     const height = (bottom - top) + 1;
 
-    return {topleft: [leftmost, top], width, height};
+    return {left, top, width, height};
 };
 
 const createComparator = (png1, png2, opts) => {
@@ -154,17 +156,20 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
 
     prepareOpts(opts);
 
-    readPair(reference, image, (error, {first, second}) => {
+    readPair(reference, image, (error, pair) => {
         if (error) {
             return callback(error, null);
         }
 
+        const first = pair.first;
+        const second = pair.second;
+
         if (first.width !== second.width || first.height !== second.height) {
-            return callback(null, false);
+            return process.nextTick(() => callback(null, false));
         }
 
         const comparator = createComparator(first, second, opts);
-        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator);
+        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail: true});
 
         callback(null, diffPixelsCoords.length === 0);
     });
@@ -178,21 +183,25 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 
     prepareOpts(opts);
 
-    readPair(reference, image, (error, {first, second}) => {
+    readPair(reference, image, (error, pair) => {
         if (error) {
             return callback(error, null);
         }
 
+        const first = pair.first;
+        const second = pair.second;
+
         if (first.width !== second.width || first.height !== second.height) {
-            return callback(null, {
+            return process.nextTick(() => callback(null, {
                 width: Math.max(first.width, second.width),
                 height: Math.max(first.height, second.height),
-                topleft: [0, 0]
-            });
+                top: 0,
+                left: 0
+            }));
         }
 
         const comparator = createComparator(first, second, opts);
-        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator, false);
+        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator);
 
         if (!diffPixelsCoords.length) {
             return callback(null, null);

@@ -7,7 +7,9 @@ const expect = require('chai').expect;
 
 const looksSame = require('..');
 const png = require('../lib/png');
-const {readPair, getDiffPixelsCoords} = require('../lib/utils');
+const utils = require('../lib/utils');
+const readPair = utils.readPair;
+const getDiffPixelsCoords = utils.getDiffPixelsCoords;
 const areColorsSame = require('../lib/same-colors');
 
 const imagePath = (name) => path.join(__dirname, 'data', name);
@@ -456,7 +458,8 @@ describe('getDiffArea', () => {
             expect(error).to.equal(null);
             expect(result.width).to.equal(50);
             expect(result.height).to.equal(30);
-            expect(result.topleft).to.deep.equal([0, 10]);
+            expect(result.top).to.equal(10);
+            expect(result.left).to.equal(0);
             done();
         });
     });
@@ -466,7 +469,8 @@ describe('getDiffArea', () => {
             expect(error).to.equal(null);
             expect(result.width).to.equal(500);
             expect(result.height).to.equal(500);
-            expect(result.topleft).to.deep.equal([0, 0]);
+            expect(result.top).to.equal(0);
+            expect(result.left).to.equal(0);
             done();
         });
     });
@@ -482,20 +486,20 @@ describe('getDiffArea', () => {
 });
 
 describe('getDiffPixelsCoords', () => {
-    it('should return first non-matching pixel by default', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, {first, second}) {
-            const result = getDiffPixelsCoords(first, second, areColorsSame);
+    it('should return all non-matching pixels by default', (done) => {
+        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, pair) {
+            const result = getDiffPixelsCoords(pair.first, pair.second, areColorsSame);
 
-            expect(result.length).to.equal(1);
+            expect(result.length).to.equal(302);
             done();
         });
     });
 
-    it('should return all non-matching pixels if asked for', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, {first, second}) {
-            const result = getDiffPixelsCoords(first, second, areColorsSame, false);
+    it('should return first non-matching pixel if asked for', (done) => {
+        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, pair) {
+            const result = getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true});
 
-            expect(result.length).to.equal(302);
+            expect(result.length).to.equal(1);
             done();
         });
     });
