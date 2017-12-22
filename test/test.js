@@ -487,20 +487,20 @@ describe('getDiffArea', () => {
 
 describe('getDiffPixelsCoords', () => {
     it('should return all non-matching pixels by default', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, pair) {
-            const result = getDiffPixelsCoords(pair.first, pair.second, areColorsSame);
-
-            expect(result.length).to.equal(302);
-            done();
+        readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, (result) => {
+                expect(result.length).to.equal(302);
+                done();
+            });
         });
     });
 
     it('should return first non-matching pixel if asked for', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), function(error, pair) {
-            const result = getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true});
-
-            expect(result.length).to.equal(1);
-            done();
+        readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, (result) => {
+                expect(result.length).to.equal(1);
+                done();
+            });
         });
     });
 });

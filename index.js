@@ -158,7 +158,7 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
 
     readPair(reference, image, (error, pair) => {
         if (error) {
-            return callback(error, null);
+            return callback(error);
         }
 
         const first = pair.first;
@@ -169,9 +169,10 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         }
 
         const comparator = createComparator(first, second, opts);
-        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail: true});
 
-        callback(null, diffPixelsCoords.length === 0);
+        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail: true}, (result) => {
+            callback(null, result.length === 0);
+        });
     });
 };
 
@@ -185,7 +186,7 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 
     readPair(reference, image, (error, pair) => {
         if (error) {
-            return callback(error, null);
+            return callback(error);
         }
 
         const first = pair.first;
@@ -201,13 +202,14 @@ exports.getDiffArea = function(reference, image, opts, callback) {
         }
 
         const comparator = createComparator(first, second, opts);
-        const diffPixelsCoords = getDiffPixelsCoords(first, second, comparator);
 
-        if (!diffPixelsCoords.length) {
-            return callback(null, null);
-        }
+        getDiffPixelsCoords(first, second, comparator, (result) => {
+            if (!result.length) {
+                return callback(null, null);
+            }
 
-        callback(null, getDiffArea(diffPixelsCoords));
+            callback(null, getDiffArea(result));
+        });
     });
 };
 
