@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.0 - 2017-12-26
+
+* Add `getDiffArea` method
+
 ## 3.2.0 - 2017-01-18
 
 * Add ability to ignore caret when it is crossing with text
