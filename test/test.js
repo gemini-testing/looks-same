@@ -385,6 +385,70 @@ describe('createDiff', () => {
             });
         });
     });
+
+    describe('return diff area', () => {
+        describe('with diff image', () => {
+            it('should return null for similar images', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('ref.png'),
+                    current: srcPath('same.png'),
+                    diff: this.tempName,
+                    highlightColor: '#ff00ff'
+                }, (error, diffArea) => {
+                    expect(error).to.equal(null);
+                    expect(diffArea).to.equal(null);
+                    done();
+                });
+            });
+
+            it('should return correct diff area for different images', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('ref.png'),
+                    current: srcPath('different.png'),
+                    diff: this.tempName,
+                    highlightColor: '#ff00ff'
+                }, (error, diffArea) => {
+                    expect(error).to.equal(null);
+                    expect(diffArea.width).to.equal(50);
+                    expect(diffArea.height).to.equal(39);
+                    expect(diffArea.top).to.equal(1);
+                    expect(diffArea.left).to.equal(0);
+                    done();
+                });
+            });
+        });
+
+        describe('with diff image as buffer', () => {
+            it('should return null for similar images', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('ref.png'),
+                    current: srcPath('same.png'),
+                    highlightColor: '#ff00ff'
+                }, (error, buffer, diffArea) => {
+                    expect(error).to.equal(null);
+                    expect(buffer).to.not.equal(null);
+                    expect(diffArea).to.equal(null);
+                    done();
+                });
+            });
+
+            it('should return correct diff area for different images', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('ref.png'),
+                    current: srcPath('different.png'),
+                    highlightColor: '#ff00ff'
+                }, (error, buffer, diffArea) => {
+                    expect(error).to.equal(null);
+                    expect(buffer).to.not.equal(null);
+                    expect(diffArea.width).to.equal(50);
+                    expect(diffArea.height).to.equal(39);
+                    expect(diffArea.top).to.equal(1);
+                    expect(diffArea.left).to.equal(0);
+                    done();
+                });
+            });
+        });
+    });
 });
 
 describe('colors', () => {

@@ -73,28 +73,32 @@ looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error
 
 ## Building diff image
 
+Create an image file with difference between reference and current images.
+The callback receive an error and the diff area in format `{top, left, width, height}`.
+
 ```javascript
 looksSame.createDiff({
     reference: '/path/to/reference/image.png',
     current: '/path/to/current/image.png',
     diff: '/path/to/save/diff/to.png',
-    highlightColor: '#ff00ff', //color to highlight the differences
-    strict: false,//strict comparsion
+    highlightColor: '#ff00ff', // color to highlight the differences
+    strict: false, // strict comparsion
     tolerance: 2.5
-}, function(error) {
+}, function(error, diffArea) {
+    ...
 });
 ```
 
 ## Building diff image as a Buffer
 
 If you don't want the diff image to be written on disk, then simply **don't**
-pass any `diff: path` to the `createDiff` method. The callback will then
-receive a `Buffer` containing the diff as the 2nd argument.
+pass any `diff: path` to the `createDiff` method. The callback receive an error, a `Buffer`
+containing the diff and the diff area in format `{top, left, width, height}`.
 
 ```javascript
 looksSame.createDiff({
-    //exactly same options as above, but without diff
-}, function(error, buffer) {
+    // exactly same options as above, but without diff
+}, function(error, buffer, diffArea) {
     ...
 });
 ```

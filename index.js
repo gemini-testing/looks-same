@@ -100,10 +100,12 @@ const buildDiffImage = (png1, png2, options, callback) => {
     const minHeight = Math.min(png1.height, png2.height);
     const highlightColor = options.highlightColor;
     const result = png.empty(width, height);
+    const diffPixelsCoords = [];
 
     iterateRect(width, height, (x, y) => {
         if (x >= minWidth || y >= minHeight) {
             result.setPixel(x, y, highlightColor);
+            diffPixelsCoords.push([x, y]);
             return;
         }
 
@@ -112,10 +114,14 @@ const buildDiffImage = (png1, png2, options, callback) => {
 
         if (!options.comparator({color1, color2})) {
             result.setPixel(x, y, highlightColor);
+            diffPixelsCoords.push([x, y]);
         } else {
             result.setPixel(x, y, color1);
         }
-    }, () => callback(result));
+    }, () => {
+        const diffArea = _.isEmpty(diffPixelsCoords) ? null : getDiffArea(diffPixelsCoords);
+        callback(result, diffArea);
+    });
 };
 
 const parseColorString = (str) => {
@@ -216,7 +222,7 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 exports.createDiff = function saveDiff(opts, callback) {
     const tolerance = getToleranceFromOpts(opts);
 
-    readPair(opts.reference, opts.current, (error, result) => {
+    readPair(opts.reference, opts.current, (error, {first, second}) => {
         if (error) {
             return callback(error);
         }
@@ -226,11 +232,11 @@ exports.createDiff = function saveDiff(opts, callback) {
             comparator: opts.strict ? areColorsSame : makeCIEDE2000Comparator(tolerance)
         };
 
-        buildDiffImage(result.first, result.second, diffOptions, (result) => {
+        buildDiffImage(first, second, diffOptions, (result, diffArea) => {
             if (opts.diff === undefined) {
-                result.createBuffer(callback);
+                result.createBuffer((error, buffer) => callback(error, buffer, diffArea));
             } else {
-                result.save(opts.diff, callback);
+                result.save(opts.diff, (error) => callback(error, diffArea));
             }
         });
     });
