@@ -269,7 +269,7 @@ describe('createDiff', () => {
         });
     });
 
-    it('should create an image file a diff for for two images', (done) => {
+    it('should create an image file with diff between two images', (done) => {
         const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
@@ -410,6 +410,146 @@ describe('createDiff', () => {
                 expect(equal).to.be.equal(true);
                 done();
             });
+        });
+    });
+
+    describe('with antialiasing', () => {
+        describe('if there is only diff in antialiased pixels', () => {
+            it('should create diff image not equal to reference if ignore antialiasing is not set', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('antialiasing-ref.png'),
+                    current: srcPath('antialiasing-actual.png'),
+                    diff: this.tempName,
+                    highlightColor: '#FF00FF'
+                }, () => {
+                    looksSame(
+                        srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(false);
+                            done();
+                        }
+                    );
+                });
+            });
+
+            it('should create diff image equal to reference if ignore antialiasing is disabled', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('antialiasing-ref.png'),
+                    current: srcPath('antialiasing-actual.png'),
+                    diff: this.tempName,
+                    highlightColor: '#FF00FF',
+                    ignoreAntialiasing: true
+                }, () => {
+                    looksSame(
+                        srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(true);
+                            done();
+                        }
+                    );
+                });
+            });
+        });
+
+        it('should create diff image not equal to reference if there is diff not in antialised pixels', (done) => {
+            looksSame.createDiff({
+                reference: srcPath('no-caret.png'),
+                current: srcPath('1px-diff.png'),
+                diff: this.tempName,
+                highlightColor: '#FF00FF',
+                ignoreAntialiasing: true
+            }, () => {
+                looksSame(
+                    srcPath('antialiasing-ref.png'), this.tempName,
+                    (error, equal) => {
+                        expect(error).to.equal(null);
+                        expect(equal).to.equal(false);
+                        done();
+                    }
+                );
+            });
+        });
+    });
+
+    describe('with ignoreCaret', () => {
+        describe('if there is only diff in caret', () => {
+            it('should create diff image not equal to reference if ignore caret is not set', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('no-caret.png'),
+                    current: srcPath('caret.png'),
+                    diff: this.tempName,
+                    highlightColor: '#FF00FF'
+                }, () => {
+                    looksSame(
+                        srcPath('no-caret.png'), this.tempName,
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(false);
+                            done();
+                        }
+                    );
+                });
+            });
+
+            it('should create diff image equal to reference if ignore caret is disabled', (done) => {
+                looksSame.createDiff({
+                    reference: srcPath('no-caret.png'),
+                    current: srcPath('caret.png'),
+                    diff: this.tempName,
+                    highlightColor: '#FF00FF',
+                    ignoreCaret: true
+                }, () => {
+                    looksSame(
+                        srcPath('no-caret.png'), this.tempName,
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(true);
+                            done();
+                        }
+                    );
+                });
+            });
+        });
+
+        it('should create diff image not equal to reference if there is diff not in caret', (done) => {
+            looksSame.createDiff({
+                reference: srcPath('no-caret.png'),
+                current: srcPath('1px-diff.png'),
+                diff: this.tempName,
+                highlightColor: '#FF00FF',
+                ignoreCaret: true
+            }, () => {
+                looksSame(
+                    srcPath('no-caret.png'), this.tempName,
+                    (error, equal) => {
+                        expect(error).to.equal(null);
+                        expect(equal).to.equal(false);
+                        done();
+                    }
+                );
+            });
+        });
+    });
+
+    it('should create diff image equal to reference if there are diff in antialised pixels and caret', (done) => {
+        looksSame.createDiff({
+            reference: srcPath('caret+antialiasing.png'),
+            current: srcPath('no-caret+antialiasing.png'),
+            diff: this.tempName,
+            highlightColor: '#FF00FF',
+            ignoreAntialiasing: true,
+            ignoreCaret: true
+        }, () => {
+            looksSame(
+                srcPath('caret+antialiasing.png'), this.tempName, {ignoreAntialiasing: false},
+                (error, equal) => {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                }
+            );
         });
     });
 });

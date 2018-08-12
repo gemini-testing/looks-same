@@ -93,10 +93,13 @@ looksSame.createDiff({
     reference: '/path/to/reference/image.png',
     current: '/path/to/current/image.png',
     diff: '/path/to/save/diff/to.png',
-    highlightColor: '#ff00ff', //color to highlight the differences
-    strict: false,//strict comparsion
-    tolerance: 2.5
+    highlightColor: '#ff00ff', // color to highlight the differences
+    strict: false, // strict comparsion
+    tolerance: 2.5,
+    ignoreAntialiasing: false, // do not ignore antialising by default
+    ignoreCaret: false // do not ignore caret by default
 }, function(error) {
+    ...
 });
 ```
 
@@ -108,7 +111,7 @@ receive a `Buffer` containing the diff as the 2nd argument.
 
 ```javascript
 looksSame.createDiff({
-    //exactly same options as above, but without diff
+    // exactly same options as above, but without diff
 }, function(error, buffer) {
     ...
 });
