@@ -7,22 +7,22 @@
     "test": "test"
   },
   "dependencies": {
-    "color-diff": "^0.1.5",
-    "concat-stream": "^1.5.0",
+    "color-diff": "^1.1.0",
+    "concat-stream": "^1.6.2",
     "lodash": "^4.17.3",
     "parse-color": "^1.0.0",
-    "pngjs": "^3.0.1"
+    "pngjs": "^3.3.3"
   },
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "^4.1.2",
     "eslint": "^5.3.0",
     "eslint-config-gemini-testing": "^2.8.0",
-    "gm": "^1.16.0",
-    "matcha": "^0.5.0",
-    "mocha": "^1.21.4",
+    "gm": "^1.23.1",
+    "matcha": "^0.7.0",
+    "mocha": "^5.2.0",
     "proxyquire": "^1.7.10",
-    "sinon": "^1.17.6",
-    "temp": "^0.8.1"
+    "sinon": "^6.1.5",
+    "temp": "^0.8.3"
   },
   "scripts": {
     "test-unit": "mocha",
