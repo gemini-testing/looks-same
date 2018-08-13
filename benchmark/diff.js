@@ -6,7 +6,7 @@ var path = require('path'),
     looksSame = require('..');
 
 function imagePath(image) {
-    return path.resolve(__dirname, '..',  'test', 'data', 'src', image);
+    return path.resolve(__dirname, '..', 'test', 'data', 'src', image);
 }
 
 function benchamrkDiff(title, refImage, currImage) {

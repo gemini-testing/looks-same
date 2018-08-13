@@ -11,20 +11,6 @@ describe('IgnoreCaretComparator', () => {
     let IgnoreCaretComparator;
     let areColorsSame;
 
-    const expectAccepted = (params, pixels) => {
-        expect(execComparator(params, pixels)).to.equal(true);
-    };
-
-    const expectDeclined = (params, pixels) => {
-        expect(execComparator(params, pixels)).to.equal(false);
-    };
-
-    const execComparator = (params, pixels) => {
-        const colorComparator = (data) => data.color1 === data.color2;
-        const ignoreCaretComparator = new IgnoreCaretComparator(colorComparator, params.pixelRatio);
-        return compareImages(pixels, ignoreCaretComparator.compare.bind(ignoreCaretComparator));
-    };
-
     const compareImages = (pixels, comparator) => {
         const emptyPixels = _.map(pixels, (pixelRow) => Array(pixelRow.length).fill(0));
         const width = pixels[0].length;
@@ -48,6 +34,20 @@ describe('IgnoreCaretComparator', () => {
         }
 
         return res;
+    };
+
+    const execComparator = (params, pixels) => {
+        const colorComparator = (data) => data.color1 === data.color2;
+        const ignoreCaretComparator = new IgnoreCaretComparator(colorComparator, params.pixelRatio);
+        return compareImages(pixels, ignoreCaretComparator.compare.bind(ignoreCaretComparator));
+    };
+
+    const expectAccepted = (params, pixels) => {
+        expect(execComparator(params, pixels)).to.equal(true);
+    };
+
+    const expectDeclined = (params, pixels) => {
+        expect(execComparator(params, pixels)).to.equal(false);
     };
 
     beforeEach(() => {

@@ -11,9 +11,7 @@ const utils = require('./lib/utils');
 const readPair = utils.readPair;
 const getDiffPixelsCoords = utils.getDiffPixelsCoords;
 
-const JND = 2.3; //Just noticable difference
-                //if ciede2000 >= JND then colors
-                //difference is noticable by human eye
+const JND = 2.3; // Just noticable difference if ciede2000 >= JND then colors difference is noticable by human eye
 
 const getDiffArea = (diffPixelsCoords) => {
     const xs = [];
@@ -34,20 +32,6 @@ const getDiffArea = (diffPixelsCoords) => {
     const height = (bottom - top) + 1;
 
     return {left, top, width, height};
-};
-
-const createComparator = (png1, png2, opts) => {
-    let comparator = opts.strict ? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
-
-    if (opts.ignoreAntialiasing) {
-        comparator = makeAntialiasingComparator(comparator, png1, png2);
-    }
-
-    if (opts.ignoreCaret) {
-        comparator = makeNoCaretColorComparator(comparator, opts.pixelRatio);
-    }
-
-    return comparator;
 };
 
 const makeAntialiasingComparator = (comparator, png1, png2) => {
@@ -72,6 +56,20 @@ function makeCIEDE2000Comparator(tolerance) {
         return colorDiff.diff(lab1, lab2) < tolerance;
     };
 }
+
+const createComparator = (png1, png2, opts) => {
+    let comparator = opts.strict ? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
+
+    if (opts.ignoreAntialiasing) {
+        comparator = makeAntialiasingComparator(comparator, png1, png2);
+    }
+
+    if (opts.ignoreCaret) {
+        comparator = makeNoCaretColorComparator(comparator, opts.pixelRatio);
+    }
+
+    return comparator;
+};
 
 const iterateRect = (width, height, callback, endCallback) => {
     const processRow = (y) => {
