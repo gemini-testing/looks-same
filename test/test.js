@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const temp = require('temp');
 const expect = require('chai').expect;
+const PngImg = require('png-img');
 
 const looksSame = require('..');
 const png = require('../lib/png');
@@ -25,6 +26,13 @@ const forFilesAndBuffers = (callback) => {
 
     describe('with buffers as arguments', () => {
         callback(readImage);
+    });
+
+    describe('with "png-img" instances as arguments', () => {
+        callback((name) => {
+            const buffer = readImage(name);
+            return new PngImg(buffer);
+        });
     });
 };
 

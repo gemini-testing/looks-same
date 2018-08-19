@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const parseColor = require('parse-color');
 const colorDiff = require('color-diff');
-const png = require('./lib/png');
+const Png = require('./lib/png');
 const areColorsSame = require('./lib/same-colors');
 const AntialiasingComparator = require('./lib/antialiasing-comparator');
 const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
@@ -99,7 +99,7 @@ const buildDiffImage = (png1, png2, options, callback) => {
     const minWidth = Math.min(png1.width, png2.width);
     const minHeight = Math.min(png1.height, png2.height);
     const highlightColor = options.highlightColor;
-    const result = png.empty(width, height);
+    const result = Png.empty(width, height);
 
     iterateRect(width, height, (x, y) => {
         if (x >= minWidth || y >= minHeight) {

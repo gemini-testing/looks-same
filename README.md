@@ -17,7 +17,7 @@ looksSame('image1.png', 'image2.png', function(error, equal) {
 });
 ```
 
-Parameters can be paths to files or buffer with compressed `png` image.
+Parameters can be paths to files, buffer with compressed `png` image or [`png-img`](https://github.com/gemini-testing/png-img) instances.
 
 By default, it will detect only noticeable differences. If you wish to detect any difference,
 use `strict` options:
@@ -28,8 +28,7 @@ looksSame('image1.png', 'image2.png', {strict: true}, function(error, equal) {
 });
 ```
 
-You can also adjust the [ΔE](http://en.wikipedia.org/wiki/Color_difference) value that will be treated as error
-in non-strict mode:
+You can also adjust the [ΔE](http://en.wikipedia.org/wiki/Color_difference) value that will be treated as error in non-strict mode:
 
 ```javascript
 looksSame('image1.png', 'image2.png', {tolerance: 5}, function(error, equal) {
@@ -68,6 +67,29 @@ Some images has difference while comparing because of antialiasing. These diffs 
 ```javascript
 looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, equal) {
     ...
+});
+```
+
+### Comparing images as buffers
+
+```javascript
+var buf1 = fs.readFileSync('image1.png');
+var buf2 = fs.readFileSync('image2.png');
+
+looksSame(buf1, buf2, function(error, equal) {
+    //equal will be true, if images looks the same
+});
+```
+
+### Comparing images as png-img instances
+
+```javascript
+var PngImg = require('png-img');
+var buf1 = fs.readFileSync('image1.png');
+var buf2 = fs.readFileSync('image2.png');
+
+looksSame(new PngImg(buf1), new PngImg(buf2), function(error, equal) {
+    //equal will be true, if images looks the same
 });
 ```
 
