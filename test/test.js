@@ -6,7 +6,6 @@ const temp = require('temp');
 const expect = require('chai').expect;
 
 const looksSame = require('..');
-const png = require('../lib/png');
 const utils = require('../lib/utils');
 const readPair = utils.readPair;
 const getDiffPixelsCoords = utils.getDiffPixelsCoords;
@@ -248,7 +247,7 @@ describe('createDiff', () => {
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
             diff: this.tempName,
-            highlightColor: '#ff00ff',
+            highlightColor: '#ff00ff'
         }, () => {
             expect(fs.existsSync(_this.tempName)).to.equal(true);
             done();
@@ -366,7 +365,7 @@ describe('createDiff', () => {
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            highlightColor: '#ff00ff',
+            highlightColor: '#ff00ff'
         }, (error, buffer) => {
             expect(buffer).to.be.an.instanceof(Buffer);
             done();
@@ -377,7 +376,7 @@ describe('createDiff', () => {
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            highlightColor: '#ff00ff',
+            highlightColor: '#ff00ff'
         }, (error, buffer) => {
             looksSame(imagePath('diffs/small-magenta.png'), buffer, (error, equal) => {
                 expect(equal).to.be.equal(true);
