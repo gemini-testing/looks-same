@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0 - 2018-09-11
+
+* Update nodejs to 6 version
+* Add ability to make ignore antialiasing less strict
+
 ## 3.3.0 - 2017-12-26
 
 * Add `getDiffArea` method
