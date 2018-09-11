@@ -11,7 +11,7 @@ const utils = require('./lib/utils');
 const readPair = utils.readPair;
 const getDiffPixelsCoords = utils.getDiffPixelsCoords;
 
-const JND = 2.3; // Just noticable difference if ciede2000 >= JND then colors difference is noticable by human eye
+const JND = 2.3; // Just noticeable difference if ciede2000 >= JND then colors difference is noticeable by human eye
 
 const getDiffArea = (diffPixelsCoords) => {
     const xs = [];
@@ -34,8 +34,8 @@ const getDiffArea = (diffPixelsCoords) => {
     return {left, top, width, height};
 };
 
-const makeAntialiasingComparator = (comparator, png1, png2) => {
-    const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2);
+const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
+    const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2, opts);
     return (data) => antialiasingComparator.compare(data);
 };
 
@@ -61,7 +61,7 @@ const createComparator = (png1, png2, opts) => {
     let comparator = opts.strict ? areColorsSame : makeCIEDE2000Comparator(opts.tolerance);
 
     if (opts.ignoreAntialiasing) {
-        comparator = makeAntialiasingComparator(comparator, png1, png2);
+        comparator = makeAntialiasingComparator(comparator, png1, png2, opts);
     }
 
     if (opts.ignoreCaret) {
@@ -141,9 +141,10 @@ const getToleranceFromOpts = (opts) => {
 const prepareOpts = (opts) => {
     opts.tolerance = getToleranceFromOpts(opts);
 
-    if (opts.ignoreAntialiasing === undefined) {
-        opts.ignoreAntialiasing = true;
-    }
+    _.defaults(opts, {
+        ignoreAntialiasing: true,
+        antialiasingTolerance: 0
+    });
 };
 
 module.exports = exports = function looksSame(reference, image, opts, callback) {

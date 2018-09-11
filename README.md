@@ -42,6 +42,18 @@ Setting `tolerance` to 0 will produce the same result as `strict: true`, but str
 is faster.
 Attempt to set `tolerance` in strict mode will produce an error.
 
+Some devices can have different proportion between physical and logical screen resolutions also
+known as `pixel ratio`. Default value for this proportion is 1.
+This param also affects the comparison result, so it can be set manually with `pixelRatio` option.
+
+```javascript
+looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, equal) {
+    ...
+});
+```
+
+### Comparing images with ignoring caret
+
 For visual regression tasks it may be useful to ignore text caret in text input elements.
 You can do it with `ignoreCaret` option.
 
@@ -53,20 +65,23 @@ looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, equal
 
 Both `strict` and `ignoreCaret` can be set independently of one another.
 
-Some devices can have different proportion between physical and logical screen resolutions also
-known as `pixel ratio`. Default value for this proportion is 1.
-This param also affects the comparison result, so it can be set manually with `pixelRatio` option.
-
-```javascript
-looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, equal) {
-    ...
-});
-```
+### Comparing images with ignoring antialiasing
 
 Some images has difference while comparing because of antialiasing. These diffs will be ignored by default. You can use `ignoreAntialiasing` option with `false` value to disable ignoring such diffs. In that way antialiased pixels will be marked as diffs. Read more about [anti-aliasing algorithm](http://www.eejournal.ktu.lt/index.php/elt/article/view/10058/5000).
 
 ```javascript
 looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, equal) {
+    ...
+});
+```
+
+Sometimes the antialiasing algorithm can work incorrectly due to some features of the browser rendering engine. Use the option `antialiasingTolerance` to make the algorithm less strict. With this option you can specify the minimum difference in brightness (zero by default) between the darkest/lightest pixel (which is adjacent to the antialiasing pixel) and theirs adjacent pixels.
+
+We recommend that you don't increase this value above 10. If you need to increase more than 10 then this is definitely not antialiasing.
+
+Example:
+```javascript
+looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTolerance: 3}, function(error, equal) {
     ...
 });
 ```

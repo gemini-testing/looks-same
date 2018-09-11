@@ -198,6 +198,34 @@ describe('looksSame', () => {
                     done();
                 });
             });
+
+            [1, 2].forEach((ind) => {
+                it('should return false for images with default "antialiasingTolerance"', (done) => {
+                    looksSame(
+                        getImage(`antialiasing-tolerance-ref-${ind}.png`),
+                        getImage(`antialiasing-tolerance-actual-${ind}.png`),
+                        {ignoreAntialiasing: true},
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(false);
+                            done();
+                        }
+                    );
+                });
+
+                it('should return true for images with passed "antialiasingTolerance"', (done) => {
+                    looksSame(
+                        getImage(`antialiasing-tolerance-ref-${ind}.png`),
+                        getImage(`antialiasing-tolerance-actual-${ind}.png`),
+                        {antialiasingTolerance: 4},
+                        (error, equal) => {
+                            expect(error).to.equal(null);
+                            expect(equal).to.equal(true);
+                            done();
+                        }
+                    );
+                });
+            });
         });
     });
 });

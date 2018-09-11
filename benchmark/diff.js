@@ -9,7 +9,7 @@ function imagePath(image) {
     return path.resolve(__dirname, '..', 'test', 'data', 'src', image);
 }
 
-function benchamrkDiff(title, refImage, currImage) {
+function benchmarkDiff(title, refImage, currImage) {
     suite(title, function() {
         var path1 = temp.path({suffix: '.png'}),
             path2 = temp.path({suffix: '.png'});
@@ -39,12 +39,12 @@ function benchamrkDiff(title, refImage, currImage) {
     });
 }
 
-benchamrkDiff('small diff',
+benchmarkDiff('small diff',
     imagePath('ref.png'),
     imagePath('different.png')
 );
 
-benchamrkDiff('large diff',
+benchmarkDiff('large diff',
     imagePath('large-ref.png'),
     imagePath('large-different.png')
 );
