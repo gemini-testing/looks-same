@@ -328,6 +328,38 @@ describe('createDiff', () => {
         });
     });
 
+    it('should apply full transparency to the diff if set to 0', (done) => {
+        const _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            transparency: 0
+        }, () => {
+            looksSame(imagePath('diffs/different-0-alpha.png'), _this.tempName, {strict: true}, (error, equal) => {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
+    it('should support partial transparency in the diff', (done) => {
+        const _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            transparency: 50
+        }, () => {
+            looksSame(imagePath('diffs/different-50-alpha.png'), _this.tempName, {strict: true}, (error, equal) => {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
     it('should allow to build diff for taller images', (done) => {
         const _this = this;
         looksSame.createDiff({

@@ -94,7 +94,8 @@ looksSame.createDiff({
     current: '/path/to/current/image.png',
     diff: '/path/to/save/diff/to.png',
     highlightColor: '#ff00ff', //color to highlight the differences
-    strict: false,//strict comparsion
+    transparency: 255, //0-255, controls the alpha channel for unchanged pixels
+    strict: false,//strict comparison
     tolerance: 2.5
 }, function(error) {
 });
