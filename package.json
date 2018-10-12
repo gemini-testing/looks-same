@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
   "main": "index.js",
+  "types": "index.d.ts",
   "directories": {
     "test": "test"
   },
