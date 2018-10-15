@@ -39,37 +39,6 @@ interface LooksSameOptions {
 }
 
 /**
- * The options passed to looksSame.createDiff function
- */
-interface CreateDiffOptions {
-    /**
-     * The baseline image path
-     */
-    reference: string;
-    /**
-     * The current image path
-     */
-    current: string;
-    /**
-     * The diff image path to store
-     */
-    diff: string;
-    /**
-     * Color to highlight the differences
-     * e.g. '#ff00ff'
-     */
-    highlightColor: string;
-    /**
-     * strict comparsion
-     */
-    strict: boolean;
-    /**
-     * ΔE value that will be treated as error in non-strict mode
-     */
-    tolerance: number;
-}
-
-/**
  * The options passed to looksSame.createDiff function without diff
  */
 interface CreateDiffAsBufferOptions {
