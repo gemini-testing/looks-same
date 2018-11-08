@@ -15,6 +15,7 @@
     "pngjs": "^3.3.3"
   },
   "devDependencies": {
+    "@types/node": "^10.12.3",
     "chai": "^4.1.2",
     "eslint": "^5.3.0",
     "eslint-config-gemini-testing": "^2.8.0",

@@ -1,3 +1,10 @@
+// Type definitions for looks-same 4.0
+// Project: https://github.com/gemini-testing/looks-same/releases
+// Definitions by: xcatliu <https://github.com/xcatliu>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+
+/// <reference types="node"/>
+
 type LooksSameCallback = (error: Error | null, equal: boolean) => any;
 
 /**
@@ -31,8 +38,9 @@ interface LooksSameOptions {
     /**
      * Sometimes the antialiasing algorithm can work incorrectly due to some features of the browser rendering engine.
      * Use the option antialiasingTolerance to make the algorithm less strict.
-     * With this option you can specify the minimum difference in brightness (zero by default) between the darkest/lightest pixel (which is adjacent to the antialiasing pixel) and theirs adjacent pixels.
-     * 
+     * With this option you can specify the minimum difference in brightness (zero by default)
+     * between the darkest/lightest pixel (which is adjacent to the antialiasing pixel) and theirs adjacent pixels.
+     *
      * We recommend that you don't increase this value above 10. If you need to increase more than 10 then this is definitely not antialiasing.
      */
     antialiasingTolerance?: number;
