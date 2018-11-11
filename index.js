@@ -28,10 +28,7 @@ const getDiffArea = (diffPixelsCoords) => {
     const left = Math.min.apply(Math, xs);
     const right = Math.max.apply(Math, xs);
 
-    const width = (right - left) + 1;
-    const height = (bottom - top) + 1;
-
-    return {left, top, width, height};
+    return {left, top, right, bottom};
 };
 
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
@@ -164,13 +161,16 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         const second = pair.second;
 
         if (first.width !== second.width || first.height !== second.height) {
-            return process.nextTick(() => callback(null, false));
+            return process.nextTick(() => callback(null, {equal: false}));
         }
 
         const comparator = createComparator(first, second, opts);
+        const {stopOnFirstFail} = opts;
 
-        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail: true}, (result) => {
-            callback(null, result.length === 0);
+        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail}, (result) => {
+            const diffBounds = getDiffArea(result);
+
+            callback(null, {equal: result.length === 0, diffBounds});
         });
     });
 };
@@ -193,10 +193,10 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 
         if (first.width !== second.width || first.height !== second.height) {
             return process.nextTick(() => callback(null, {
-                width: Math.max(first.width, second.width),
-                height: Math.max(first.height, second.height),
+                left: 0,
                 top: 0,
-                left: 0
+                right: Math.max(first.width, second.width),
+                bottom: Math.max(first.height, second.height)
             }));
         }
 
