@@ -1,11 +1,10 @@
 // Type definitions for looks-same 4.0
 // Project: https://github.com/gemini-testing/looks-same/releases
 // Definitions by: xcatliu <https://github.com/xcatliu>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference types="node"/>
 
-type LooksSameCallback = (error: Error | null, equal: boolean) => any;
+type LooksSameCallback = (error: Error | null, equal: boolean) => void;
 
 /**
  * The options passed to looksSame function
@@ -86,7 +85,7 @@ interface CreateDiffOptions extends CreateDiffAsBufferOptions {
 /**
  * Pass to looksSame.colors function
  */
-interface LooksSameColor {
+interface Color {
     /**
      * Red
      */
@@ -118,9 +117,9 @@ declare function looksSame(image1: string, image2: string, options: LooksSameOpt
 declare function looksSame(image1: string, image2: string, callback: LooksSameCallback): void;
 
 // https://stackoverflow.com/questions/44058101/typescript-declare-third-party-modules
-declare namespace looksSame {
-    function createDiff(options: CreateDiffOptions, callback: (error: Error | null) => any): void;
-    function createDiff(options: CreateDiffAsBufferOptions, callback: (error: Error | null, buffer: Buffer) => any): void;
+declare module looksSame {
+    export function createDiff(options: CreateDiffOptions, callback: (error: Error | null) => any): void;
+    export function createDiff(options: CreateDiffAsBufferOptions, callback: (error: Error | null, buffer: Buffer) => any): void;
 
     /**
      * Compare two colors
@@ -128,7 +127,7 @@ declare namespace looksSame {
      * @param color2 The second color
      * @param options The options passed to looksSame.colors function
      */
-    function colors(color1: LooksSameColor, color2: LooksSameColor, options: { tolerance: number }): void;
+    export function colors(color1: Color, color2: Color, options: { tolerance: number }): void;
 }
 
 /**
