@@ -65,11 +65,19 @@ interface CreateDiffAsBufferOptions {
     /**
      * strict comparsion
      */
-    strict: boolean;
+    strict?: boolean;
     /**
      * ΔE value that will be treated as error in non-strict mode
      */
-    tolerance: number;
+    tolerance?: number;
+    /**
+     * Ability to ignore antialiasing
+     */
+    ignoreAntialiasing?: boolean;
+    /**
+     * Ability to ignore text caret
+     */
+    ignoreCaret?: false;
 }
 
 /**

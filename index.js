@@ -108,7 +108,7 @@ const buildDiffImage = (png1, png2, options, callback) => {
         const color1 = png1.getPixel(x, y);
         const color2 = png2.getPixel(x, y);
 
-        if (!options.comparator({color1, color2})) {
+        if (!options.comparator({color1, color2, png1, png2, x, y, width, height})) {
             result.setPixel(x, y, highlightColor);
         } else {
             result.setPixel(x, y, color1);
@@ -213,19 +213,19 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 };
 
 exports.createDiff = function saveDiff(opts, callback) {
-    const tolerance = getToleranceFromOpts(opts);
+    opts.tolerance = getToleranceFromOpts(opts);
 
-    readPair(opts.reference, opts.current, (error, result) => {
+    readPair(opts.reference, opts.current, (error, {first, second}) => {
         if (error) {
             return callback(error);
         }
 
         const diffOptions = {
             highlightColor: parseColorString(opts.highlightColor),
-            comparator: opts.strict ? areColorsSame : makeCIEDE2000Comparator(tolerance)
+            comparator: createComparator(first, second, opts)
         };
 
-        buildDiffImage(result.first, result.second, diffOptions, (result) => {
+        buildDiffImage(first, second, diffOptions, (result) => {
             if (opts.diff === undefined) {
                 result.createBuffer(callback);
             } else {
