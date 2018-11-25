@@ -667,7 +667,7 @@ describe('getDiffPixelsCoords', () => {
 
     it('should return first non-matching pixel if asked for', (done) => {
         readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
-            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, (result) => {
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {bail: true}, (result) => {
                 expect(result.length).to.equal(1);
                 done();
             });

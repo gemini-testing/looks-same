@@ -165,9 +165,9 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         }
 
         const comparator = createComparator(first, second, opts);
-        const {stopOnFirstFail} = opts;
+        const {bail} = opts;
 
-        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail}, (result) => {
+        getDiffPixelsCoords(first, second, comparator, {bail}, (result) => {
             const diffBounds = getDiffArea(result);
 
             callback(null, {equal: result.length === 0, diffBounds});
