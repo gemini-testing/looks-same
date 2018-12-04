@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.0 - 2018-12-05
+
+* add ability to ignore antialiasing and caret in "createDiff" method
+* add typescript types
+
 ## 4.0.0 - 2018-09-11
 
 * Update nodejs to 6 version
