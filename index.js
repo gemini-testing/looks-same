@@ -144,6 +144,13 @@ const prepareOpts = (opts) => {
     });
 };
 
+const getMaxDiffBounds = (first, second) => ({
+    left: 0,
+    top: 0,
+    right: Math.max(first.width, second.width),
+    bottom: Math.max(first.height, second.height)
+});
+
 module.exports = exports = function looksSame(reference, image, opts, callback) {
     if (!callback) {
         callback = opts;
@@ -161,13 +168,13 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         const second = pair.second;
 
         if (first.width !== second.width || first.height !== second.height) {
-            return process.nextTick(() => callback(null, {equal: false}));
+            return process.nextTick(() => callback(null, {equal: false, diffBounds: getMaxDiffBounds(first, second)}));
         }
 
         const comparator = createComparator(first, second, opts);
-        const {bail} = opts;
+        const {findAllDiff} = opts;
 
-        getDiffPixelsCoords(first, second, comparator, {bail}, (result) => {
+        getDiffPixelsCoords(first, second, comparator, {findAllDiff}, (result) => {
             const diffBounds = getDiffArea(result);
 
             callback(null, {equal: result.length === 0, diffBounds});
@@ -192,12 +199,7 @@ exports.getDiffArea = function(reference, image, opts, callback) {
         const second = pair.second;
 
         if (first.width !== second.width || first.height !== second.height) {
-            return process.nextTick(() => callback(null, {
-                left: 0,
-                top: 0,
-                right: Math.max(first.width, second.width),
-                bottom: Math.max(first.height, second.height)
-            }));
+            return process.nextTick(() => callback(null, {...getMaxDiffBounds(first, second)}));
         }
 
         const comparator = createComparator(first, second, opts);

@@ -101,6 +101,15 @@ describe('looksSame', () => {
             });
         });
 
+        it('should return sizes of a bigger image if images have different sizes', (done) => {
+            looksSame(srcPath('ref.png'), srcPath('large-different.png'), (error, {equal, diffBounds}) => {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(false);
+                expect(diffBounds).to.deep.equal({left: 0, top: 0, right: 500, bottom: 500});
+                done();
+            });
+        });
+
         [
             'red',
             'blue',
@@ -431,7 +440,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
                             done();
@@ -450,7 +459,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
                             done();
@@ -470,7 +479,7 @@ describe('createDiff', () => {
             }, () => {
                 looksSame(
                     srcPath('antialiasing-ref.png'), this.tempName,
-                    (error, equal) => {
+                    (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
                         done();
@@ -491,7 +500,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('no-caret.png'), this.tempName,
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
                             done();
@@ -510,7 +519,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('no-caret.png'), this.tempName,
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
                             done();
@@ -530,7 +539,7 @@ describe('createDiff', () => {
             }, () => {
                 looksSame(
                     srcPath('no-caret.png'), this.tempName,
-                    (error, equal) => {
+                    (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
                         done();
@@ -551,7 +560,7 @@ describe('createDiff', () => {
         }, () => {
             looksSame(
                 srcPath('caret+antialiasing.png'), this.tempName, {ignoreAntialiasing: false},
-                (error, equal) => {
+                (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -629,6 +638,7 @@ describe('getDiffArea', () => {
 
     it('should return correct diff area for different images', (done) => {
         looksSame.getDiffArea(srcPath('ref.png'), srcPath('different.png'), (error, result) => {
+            console.log(result);
             expect(error).to.equal(null);
             expect(result.right).to.equal(49);
             expect(result.bottom).to.equal(39);
@@ -667,7 +677,7 @@ describe('getDiffPixelsCoords', () => {
 
     it('should return first non-matching pixel if asked for', (done) => {
         readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
-            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {bail: true}, (result) => {
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {findAllDiff: true}, (result) => {
                 expect(result.length).to.equal(1);
                 done();
             });
