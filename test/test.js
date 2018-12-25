@@ -39,7 +39,7 @@ describe('looksSame', () => {
 
     forFilesAndBuffers((getImage) => {
         it('should return true for similar images', (done) => {
-            looksSame(getImage('ref.png'), getImage('same.png'), (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('same.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(true);
                 done();
@@ -47,15 +47,22 @@ describe('looksSame', () => {
         });
 
         it('should return false for different images', (done) => {
-            looksSame(getImage('ref.png'), getImage('different.png'), (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('different.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
             });
         });
 
+        it('should return diff bounds for different images', (done) => {
+            looksSame(getImage('ref.png'), getImage('different.png'), (error, {diffBounds}) => {
+                expect(diffBounds).to.deep.equal({left: 0, top: 10, right: 49, bottom: 39});
+                done();
+            });
+        });
+
         it('should return true for different images when tolerance is higher than difference', (done) => {
-            looksSame(getImage('ref.png'), getImage('different.png'), {tolerance: 50}, (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('different.png'), {tolerance: 50}, (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(true);
                 done();
@@ -63,7 +70,7 @@ describe('looksSame', () => {
         });
 
         it('should return true for different images when difference is not seen by human eye', (done) => {
-            looksSame(getImage('ref.png'), getImage('different-unnoticable.png'), (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('different-unnoticable.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(true);
                 done();
@@ -71,7 +78,7 @@ describe('looksSame', () => {
         });
 
         it('should return false if difference is not seen by human eye and strict mode is enabled', (done) => {
-            looksSame(getImage('ref.png'), getImage('different-unnoticable.png'), {strict: true}, (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('different-unnoticable.png'), {strict: true}, (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
@@ -79,7 +86,7 @@ describe('looksSame', () => {
         });
 
         it('should work when images width does not match', (done) => {
-            looksSame(getImage('ref.png'), getImage('wide.png'), (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('wide.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
@@ -87,9 +94,18 @@ describe('looksSame', () => {
         });
 
         it('should work when images height does not match', (done) => {
-            looksSame(getImage('ref.png'), getImage('tall.png'), (error, equal) => {
+            looksSame(getImage('ref.png'), getImage('tall.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
+                done();
+            });
+        });
+
+        it('should return diff bound equal to a bigger image if images have different sizes', (done) => {
+            looksSame(srcPath('ref.png'), srcPath('large-different.png'), (error, {equal, diffBounds}) => {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(false);
+                expect(diffBounds).to.deep.equal({left: 0, top: 0, right: 499, bottom: 499});
                 done();
             });
         });
@@ -100,7 +116,7 @@ describe('looksSame', () => {
             'green'
         ].forEach((channel) => {
             it(`should report image as different if the difference is only in ${channel} channel`, (done) => {
-                looksSame(getImage('ref.png'), getImage(`${channel}.png`), (error, equal) => {
+                looksSame(getImage('ref.png'), getImage(`${channel}.png`), (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -109,7 +125,7 @@ describe('looksSame', () => {
         });
 
         it('should return false for images which differ from each other only by 1 pixel', (done) => {
-            looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), (error, equal) => {
+            looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), (error, {equal}) => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
@@ -120,7 +136,7 @@ describe('looksSame', () => {
     describe('with ignoreCaret', () => {
         forFilesAndBuffers((getImage) => {
             it('if disabled, should return false for images with caret', (done) => {
-                looksSame(getImage('no-caret.png'), getImage('caret.png'), (error, equal) => {
+                looksSame(getImage('no-caret.png'), getImage('caret.png'), (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -128,7 +144,7 @@ describe('looksSame', () => {
             });
 
             it('if enabled, should return true for images with caret', (done) => {
-                looksSame(getImage('no-caret.png'), getImage('caret.png'), {ignoreCaret: true}, (error, equal) => {
+                looksSame(getImage('no-caret.png'), getImage('caret.png'), {ignoreCaret: true}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -136,7 +152,7 @@ describe('looksSame', () => {
             });
 
             it('if enabled, should return true for images with caret intersecting with a letter', (done) => {
-                looksSame(getImage('no-caret+text.png'), getImage('caret+text.png'), {ignoreCaret: true}, (error, equal) => {
+                looksSame(getImage('no-caret+text.png'), getImage('caret+text.png'), {ignoreCaret: true}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -148,7 +164,7 @@ describe('looksSame', () => {
                     ignoreCaret: true,
                     ignoreAntialiasing: true
                 };
-                looksSame(getImage('caret+antialiasing.png'), getImage('no-caret+antialiasing.png'), opts, (error, equal) => {
+                looksSame(getImage('caret+antialiasing.png'), getImage('no-caret+antialiasing.png'), opts, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -156,7 +172,7 @@ describe('looksSame', () => {
             });
 
             it('if enabled, should return false for images with 1px diff', (done) => {
-                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), (error, equal) => {
+                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -168,7 +184,7 @@ describe('looksSame', () => {
     describe('with antialiasing', () => {
         forFilesAndBuffers((getImage) => {
             it('should check images for antialiasing by default', (done) => {
-                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), (error, equal) => {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -176,7 +192,7 @@ describe('looksSame', () => {
             });
 
             it('if disabled, should return false for images with antialiasing', (done) => {
-                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: false}, (error, equal) => {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: false}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -184,7 +200,7 @@ describe('looksSame', () => {
             });
 
             it('if enabled, should return true for images with antialiasing', (done) => {
-                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: true}, (error, equal) => {
+                looksSame(getImage('antialiasing-ref.png'), getImage('antialiasing-actual.png'), {ignoreAntialiasing: true}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -192,7 +208,7 @@ describe('looksSame', () => {
             });
 
             it('should return false for images which differ even with ignore antialiasing option', (done) => {
-                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), {ignoreAntialiasing: true}, (error, equal) => {
+                looksSame(getImage('no-caret.png'), getImage('1px-diff.png'), {ignoreAntialiasing: true}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -205,7 +221,7 @@ describe('looksSame', () => {
                         getImage(`antialiasing-tolerance-ref-${ind}.png`),
                         getImage(`antialiasing-tolerance-actual-${ind}.png`),
                         {ignoreAntialiasing: true},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
                             done();
@@ -218,7 +234,7 @@ describe('looksSame', () => {
                         getImage(`antialiasing-tolerance-ref-${ind}.png`),
                         getImage(`antialiasing-tolerance-actual-${ind}.png`),
                         {antialiasingTolerance: 4},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
                             done();
@@ -262,7 +278,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#ff00ff'
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, equal) => {
+            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -291,7 +307,7 @@ describe('createDiff', () => {
             highlightColor: '#ff00ff',
             tolerance: 50
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, equal) => {
+            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -306,7 +322,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#ff00ff'
         }, () => {
-            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -321,7 +337,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#00FF00'
         }, () => {
-            looksSame(imagePath('diffs/small-green.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/small-green.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -336,7 +352,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/taller-magenta.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/taller-magenta.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -351,7 +367,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/wider-magenta.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/wider-magenta.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -366,7 +382,7 @@ describe('createDiff', () => {
             diff: this.tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, (error, equal) => {
+            looksSame(srcPath('ref.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -382,7 +398,7 @@ describe('createDiff', () => {
             strict: true,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/strict.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/strict.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -406,7 +422,7 @@ describe('createDiff', () => {
             current: srcPath('different.png'),
             highlightColor: '#ff00ff'
         }, (error, buffer) => {
-            looksSame(imagePath('diffs/small-magenta.png'), buffer, (error, equal) => {
+            looksSame(imagePath('diffs/small-magenta.png'), buffer, (error, {equal}) => {
                 expect(equal).to.be.equal(true);
                 done();
             });
@@ -424,7 +440,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
                             done();
@@ -443,7 +459,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
                             done();
@@ -463,7 +479,7 @@ describe('createDiff', () => {
             }, () => {
                 looksSame(
                     srcPath('antialiasing-ref.png'), this.tempName,
-                    (error, equal) => {
+                    (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
                         done();
@@ -484,7 +500,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('no-caret.png'), this.tempName,
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
                             done();
@@ -503,7 +519,7 @@ describe('createDiff', () => {
                 }, () => {
                     looksSame(
                         srcPath('no-caret.png'), this.tempName,
-                        (error, equal) => {
+                        (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
                             done();
@@ -523,7 +539,7 @@ describe('createDiff', () => {
             }, () => {
                 looksSame(
                     srcPath('no-caret.png'), this.tempName,
-                    (error, equal) => {
+                    (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
                         done();
@@ -544,7 +560,7 @@ describe('createDiff', () => {
         }, () => {
             looksSame(
                 srcPath('caret+antialiasing.png'), this.tempName, {ignoreAntialiasing: false},
-                (error, equal) => {
+                (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);
                     done();
@@ -621,10 +637,10 @@ describe('getDiffArea', () => {
     });
 
     it('should return correct diff area for different images', (done) => {
-        looksSame.getDiffArea(srcPath('ref.png'), srcPath('different.png'), (error, result) => {
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('different.png'), {stopOnFirstFail: false}, (error, result) => {
             expect(error).to.equal(null);
-            expect(result.width).to.equal(50);
-            expect(result.height).to.equal(30);
+            expect(result.right).to.equal(49);
+            expect(result.bottom).to.equal(39);
             expect(result.top).to.equal(10);
             expect(result.left).to.equal(0);
             done();
@@ -634,19 +650,15 @@ describe('getDiffArea', () => {
     it('should return sizes of a bigger image if images have different sizes', (done) => {
         looksSame.getDiffArea(srcPath('ref.png'), srcPath('large-different.png'), (error, result) => {
             expect(error).to.equal(null);
-            expect(result.width).to.equal(500);
-            expect(result.height).to.equal(500);
-            expect(result.top).to.equal(0);
-            expect(result.left).to.equal(0);
+            expect(result).to.deep.equal({left: 0, top: 0, right: 499, bottom: 499});
             done();
         });
     });
 
-    it('should return correct width and height for images that differ from each other exactly by 1 pixel', (done) => {
+    it('should return correct diff bounds for images that differ from each other exactly by 1 pixel', (done) => {
         looksSame.getDiffArea(srcPath('no-caret.png'), srcPath('1px-diff.png'), (error, result) => {
             expect(error).to.equal(null);
-            expect(result.width).to.equal(1);
-            expect(result.height).to.equal(1);
+            expect(result).to.deep.equal({left: 12, top: 6, right: 12, bottom: 6});
             done();
         });
     });

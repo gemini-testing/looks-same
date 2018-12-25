@@ -1,10 +1,46 @@
-// Type definitions for looks-same 4.0
+// Type definitions for looks-same 5.0
 // Project: https://github.com/gemini-testing/looks-same/releases
 // Definitions by: xcatliu <https://github.com/xcatliu>
 
 /// <reference types="node"/>
 
-type LooksSameCallback = (error: Error | null, equal: boolean) => void;
+/**
+ * diff bounds for not equal images
+ */
+interface DiffBounds {
+    /**
+     * X-coordinate of diff upper left corner
+     */
+    left: number;
+    /**
+     * Y-coordinate of diff upper left corner
+     */
+    top: number;
+    /**
+     * X-coordinate of diff bottom right corner
+     */
+    right: number;
+    /**
+     * Y-coordinate of diff bottom right corner
+     */
+    bottom: number;
+}
+
+/**
+ * The result obtained from the function.
+*/
+interface LooksSameResult {
+    /**
+     * true if images are equal, false - otherwise
+     */
+    equal?: boolean;
+    /**
+     * diff bounds for not equal images
+     */
+    diffBounds?: DiffBounds;
+}
+
+type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
 
 /**
  * The options passed to looksSame function
@@ -43,6 +79,11 @@ interface LooksSameOptions {
      * We recommend that you don't increase this value above 10. If you need to increase more than 10 then this is definitely not antialiasing.
      */
     antialiasingTolerance?: number;
+    /**
+     * Responsible for diff area which will be returned  when comparing images.
+     * Diff bounds will contain the whole diff if stopOnFirstFail is false and only first diff pixel - otherwise.
+     */
+    stopOnFirstFail?: boolean;
 }
 
 /**
