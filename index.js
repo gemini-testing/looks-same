@@ -139,6 +139,7 @@ const prepareOpts = (opts) => {
     opts.tolerance = getToleranceFromOpts(opts);
 
     _.defaults(opts, {
+        ignoreCaret: true,
         ignoreAntialiasing: true,
         antialiasingTolerance: 0
     });
@@ -215,7 +216,7 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 };
 
 exports.createDiff = function saveDiff(opts, callback) {
-    opts.tolerance = getToleranceFromOpts(opts);
+    prepareOpts(opts);
 
     readPair(opts.reference, opts.current, (error, {first, second}) => {
         if (error) {

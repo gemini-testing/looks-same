@@ -54,8 +54,7 @@ looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, {equal}) 
 
 ### Comparing images with ignoring caret
 
-For visual regression tasks it may be useful to ignore text caret in text input elements.
-You can do it with `ignoreCaret` option.
+Text caret in text input elements it is a pain for visual regression tasks, because it is always blinks. These diffs will be ignored by default. You can use `ignoreCaret` option with `false` value to disable ignoring such diffs. In that way text caret will be marked as diffs.
 
 ```javascript
 looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, {equal}) {
@@ -108,8 +107,9 @@ looksSame.createDiff({
     highlightColor: '#ff00ff', // color to highlight the differences
     strict: false, // strict comparsion
     tolerance: 2.5,
-    ignoreAntialiasing: false, // do not ignore antialising by default
-    ignoreCaret: false // do not ignore caret by default
+    antialiasingTolerance: 0,
+    ignoreAntialiasing: true, // ignore antialising by default
+    ignoreCaret: true // ignore caret by default
 }, function(error) {
     ...
 });
