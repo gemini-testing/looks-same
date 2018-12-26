@@ -22,11 +22,11 @@ const getDiffArea = (diffPixelsCoords) => {
         ys.push(coords[1]);
     });
 
-    const top = Math.min.apply(Math, ys);
-    const bottom = Math.max.apply(Math, ys);
+    const top = _.min(ys);
+    const bottom = _.max(ys);
 
-    const left = Math.min.apply(Math, xs);
-    const right = Math.max.apply(Math, xs);
+    const left = _.min(xs);
+    const right = _.max(xs);
 
     return {left, top, right, bottom};
 };
