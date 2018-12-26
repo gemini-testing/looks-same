@@ -12,8 +12,8 @@ for other purposes.
 ```javascript
 var looksSame = require('looks-same');
 
-looksSame('image1.png', 'image2.png', function(error, equal) {
-    //equal will be true, if images looks the same
+looksSame('image1.png', 'image2.png', function(error, {equal}) {
+    // equal will be true, if images looks the same
 });
 ```
 
@@ -23,7 +23,7 @@ By default, it will detect only noticeable differences. If you wish to detect an
 use `strict` options:
 
 ```javascript
-looksSame('image1.png', 'image2.png', {strict: true}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {strict: true}, function(error, {equal}) {
     ...
 });
 ```
@@ -32,7 +32,7 @@ You can also adjust the [ΔE](http://en.wikipedia.org/wiki/Color_difference) val
 in non-strict mode:
 
 ```javascript
-looksSame('image1.png', 'image2.png', {tolerance: 5}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {tolerance: 5}, function(error, {equal}) {
     ...
 });
 ```
@@ -47,7 +47,7 @@ known as `pixel ratio`. Default value for this proportion is 1.
 This param also affects the comparison result, so it can be set manually with `pixelRatio` option.
 
 ```javascript
-looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, {equal}) {
     ...
 });
 ```
@@ -58,7 +58,7 @@ For visual regression tasks it may be useful to ignore text caret in text input 
 You can do it with `ignoreCaret` option.
 
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, {equal}) {
     ...
 });
 ```
@@ -70,7 +70,7 @@ Both `strict` and `ignoreCaret` can be set independently of one another.
 Some images has difference while comparing because of antialiasing. These diffs will be ignored by default. You can use `ignoreAntialiasing` option with `false` value to disable ignoring such diffs. In that way antialiased pixels will be marked as diffs. Read more about [anti-aliasing algorithm](http://www.eejournal.ktu.lt/index.php/elt/article/view/10058/5000).
 
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, {equal}) {
     ...
 });
 ```
@@ -81,8 +81,20 @@ We recommend that you don't increase this value above 10. If you need to increas
 
 Example:
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTolerance: 3}, function(error, equal) {
+looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTolerance: 3}, function(error, {equal}) {
     ...
+});
+```
+
+### Getting diff bounds
+Looksame returns information about diff bounds. It returns only first pixel if you passed `stopOnFirstFail` option with `true` value. The whole diff area would be returned if `stopOnFirstFail` option is not passed or it's passed with `false` value.
+
+```javascript
+looksSame('image1.png', 'image2.png', {stopOnFirstFail: false}, function(error, {equal, diffBounds}) {
+    // {
+    //     equal: false,
+    //     diffBounds: {left: 10, top: 10, right: 20, bottom: 20}
+    // }
 });
 ```
 
