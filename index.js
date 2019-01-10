@@ -13,24 +13,6 @@ const getDiffPixelsCoords = utils.getDiffPixelsCoords;
 
 const JND = 2.3; // Just noticeable difference if ciede2000 >= JND then colors difference is noticeable by human eye
 
-const getDiffArea = (diffPixelsCoords) => {
-    const xs = [];
-    const ys = [];
-
-    diffPixelsCoords.forEach((coords) => {
-        xs.push(coords[0]);
-        ys.push(coords[1]);
-    });
-
-    const top = _.min(ys);
-    const bottom = _.max(ys);
-
-    const left = _.min(xs);
-    const right = _.max(xs);
-
-    return {left, top, right, bottom};
-};
-
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
     const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2, opts);
     return (data) => antialiasingComparator.compare(data);
@@ -175,9 +157,9 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         const {stopOnFirstFail} = opts;
 
         getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail}, (result) => {
-            const diffBounds = getDiffArea(result);
+            const diffBounds = result.area;
 
-            callback(null, {equal: result.length === 0, diffBounds});
+            callback(null, {equal: result.isEmpty(), diffBounds});
         });
     });
 };
@@ -205,11 +187,11 @@ exports.getDiffArea = function(reference, image, opts, callback) {
         const comparator = createComparator(first, second, opts);
 
         getDiffPixelsCoords(first, second, comparator, opts, (result) => {
-            if (!result.length) {
+            if (result.isEmpty()) {
                 return callback(null, null);
             }
 
-            callback(null, getDiffArea(result));
+            callback(null, result.area);
         });
     });
 };
