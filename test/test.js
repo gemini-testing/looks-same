@@ -54,6 +54,20 @@ describe('looksSame', () => {
             });
         });
 
+        it('should return reference image for different images', (done) => {
+            looksSame(getImage('ref.png'), getImage('different.png'), (error, {metaInfo: {refImg}}) => {
+                expect(refImg).to.deep.equal({size: {width: 50, height: 50}});
+                done();
+            });
+        });
+
+        it('should return reference image for equal images', (done) => {
+            looksSame(getImage('ref.png'), getImage('ref.png'), (error, {metaInfo: {refImg}}) => {
+                expect(refImg).to.deep.equal({size: {width: 50, height: 50}});
+                done();
+            });
+        });
+
         it('should return diff bounds for different images', (done) => {
             looksSame(getImage('ref.png'), getImage('different.png'), (error, {diffBounds}) => {
                 expect(diffBounds).to.deep.equal({left: 0, top: 10, right: 49, bottom: 39});

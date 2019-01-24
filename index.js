@@ -148,9 +148,11 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
 
         const first = pair.first;
         const second = pair.second;
+        const refImg = {size: {width: pair.first.width, height: pair.first.height}};
+        const metaInfo = {refImg};
 
         if (first.width !== second.width || first.height !== second.height) {
-            return process.nextTick(() => callback(null, {equal: false, diffBounds: getMaxDiffBounds(first, second)}));
+            return process.nextTick(() => callback(null, {equal: false, metaInfo, diffBounds: getMaxDiffBounds(first, second)}));
         }
 
         const comparator = createComparator(first, second, opts);
@@ -159,7 +161,7 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
         getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail}, (result) => {
             const diffBounds = result.area;
 
-            callback(null, {equal: result.isEmpty(), diffBounds});
+            callback(null, {equal: result.isEmpty(), metaInfo, diffBounds});
         });
     });
 };
