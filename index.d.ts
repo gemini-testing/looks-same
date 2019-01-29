@@ -61,7 +61,9 @@ interface LooksSameOptions {
      */
     pixelRatio?: number;
     /**
-     * For visual regression tasks it may be useful to ignore text caret in text input elements. You can do it with ignoreCaret option.
+     * Text caret in text input elements it is a pain for visual regression tasks, because it is always blinks.
+     * These diffs will be ignored by default. You can use `ignoreCaret` option with `false` value to disable ignoring such diffs.
+     * In that way text caret will be marked as diffs.
      */
     ignoreCaret?: boolean;
     /**
@@ -112,13 +114,17 @@ interface CreateDiffAsBufferOptions {
      */
     tolerance?: number;
     /**
+     * makes the search algorithm of the antialiasing less strict
+     */
+    antialiasingTolerance?: number;
+    /**
      * Ability to ignore antialiasing
      */
     ignoreAntialiasing?: boolean;
     /**
      * Ability to ignore text caret
      */
-    ignoreCaret?: false;
+    ignoreCaret?: boolean;
 }
 
 /**

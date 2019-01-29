@@ -149,8 +149,16 @@ describe('looksSame', () => {
 
     describe('with ignoreCaret', () => {
         forFilesAndBuffers((getImage) => {
-            it('if disabled, should return false for images with caret', (done) => {
+            it('should ignore caret by default', (done) => {
                 looksSame(getImage('no-caret.png'), getImage('caret.png'), (error, {equal}) => {
+                    expect(error).to.equal(null);
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('if disabled, should return false for images with caret', (done) => {
+                looksSame(getImage('no-caret.png'), getImage('caret.png'), {ignoreCaret: false}, (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(false);
                     done();
@@ -234,7 +242,7 @@ describe('looksSame', () => {
                     looksSame(
                         getImage(`antialiasing-tolerance-ref-${ind}.png`),
                         getImage(`antialiasing-tolerance-actual-${ind}.png`),
-                        {ignoreAntialiasing: true},
+                        {ignoreAntialiasing: true, ignoreCaret: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
@@ -445,7 +453,7 @@ describe('createDiff', () => {
 
     describe('with antialiasing', () => {
         describe('if there is only diff in antialiased pixels', () => {
-            it('should create diff image not equal to reference if ignore antialiasing is not set', (done) => {
+            it('should create diff image equal to reference if ignore antialiasing is not set', (done) => {
                 looksSame.createDiff({
                     reference: srcPath('antialiasing-ref.png'),
                     current: srcPath('antialiasing-actual.png'),
@@ -456,26 +464,26 @@ describe('createDiff', () => {
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
-                            expect(equal).to.equal(false);
+                            expect(equal).to.equal(true);
                             done();
                         }
                     );
                 });
             });
 
-            it('should create diff image equal to reference if ignore antialiasing is disabled', (done) => {
+            it('should create diff image not equal to reference if ignore antialiasing is disabled', (done) => {
                 looksSame.createDiff({
                     reference: srcPath('antialiasing-ref.png'),
                     current: srcPath('antialiasing-actual.png'),
                     diff: this.tempName,
                     highlightColor: '#FF00FF',
-                    ignoreAntialiasing: true
+                    ignoreAntialiasing: false
                 }, () => {
                     looksSame(
                         srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
-                            expect(equal).to.equal(true);
+                            expect(equal).to.equal(false);
                             done();
                         }
                     );
@@ -488,8 +496,7 @@ describe('createDiff', () => {
                 reference: srcPath('no-caret.png'),
                 current: srcPath('1px-diff.png'),
                 diff: this.tempName,
-                highlightColor: '#FF00FF',
-                ignoreAntialiasing: true
+                highlightColor: '#FF00FF'
             }, () => {
                 looksSame(
                     srcPath('antialiasing-ref.png'), this.tempName,
@@ -505,7 +512,7 @@ describe('createDiff', () => {
 
     describe('with ignoreCaret', () => {
         describe('if there is only diff in caret', () => {
-            it('should create diff image not equal to reference if ignore caret is not set', (done) => {
+            it('should create diff image equal to reference if ignore caret is not set', (done) => {
                 looksSame.createDiff({
                     reference: srcPath('no-caret.png'),
                     current: srcPath('caret.png'),
@@ -513,29 +520,29 @@ describe('createDiff', () => {
                     highlightColor: '#FF00FF'
                 }, () => {
                     looksSame(
-                        srcPath('no-caret.png'), this.tempName,
+                        srcPath('no-caret.png'), this.tempName, {ignoreCaret: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
-                            expect(equal).to.equal(false);
+                            expect(equal).to.equal(true);
                             done();
                         }
                     );
                 });
             });
 
-            it('should create diff image equal to reference if ignore caret is disabled', (done) => {
+            it('should create diff image not equal to reference if ignore caret is disabled', (done) => {
                 looksSame.createDiff({
                     reference: srcPath('no-caret.png'),
                     current: srcPath('caret.png'),
                     diff: this.tempName,
                     highlightColor: '#FF00FF',
-                    ignoreCaret: true
+                    ignoreCaret: false
                 }, () => {
                     looksSame(
-                        srcPath('no-caret.png'), this.tempName,
+                        srcPath('no-caret.png'), this.tempName, {ignoreCaret: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
-                            expect(equal).to.equal(true);
+                            expect(equal).to.equal(false);
                             done();
                         }
                     );
@@ -548,8 +555,7 @@ describe('createDiff', () => {
                 reference: srcPath('no-caret.png'),
                 current: srcPath('1px-diff.png'),
                 diff: this.tempName,
-                highlightColor: '#FF00FF',
-                ignoreCaret: true
+                highlightColor: '#FF00FF'
             }, () => {
                 looksSame(
                     srcPath('no-caret.png'), this.tempName,
