@@ -24,6 +24,7 @@
     "mocha": "^5.2.0",
     "proxyquire": "^1.7.10",
     "sinon": "^6.1.5",
+    "sinon-chai": "^3.3.0",
     "temp": "^0.8.3"
   },
   "scripts": {
