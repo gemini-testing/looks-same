@@ -5,25 +5,39 @@
 /// <reference types="node"/>
 
 /**
- * diff bounds for not equal images
+ * coordinate bounds
  */
-interface DiffBounds {
+interface CoordBounds {
     /**
-     * X-coordinate of diff upper left corner
+     * X-coordinate of upper left corner
      */
     left: number;
     /**
-     * Y-coordinate of diff upper left corner
+     * Y-coordinate of upper left corner
      */
     top: number;
     /**
-     * X-coordinate of diff bottom right corner
+     * X-coordinate of bottom right corner
      */
     right: number;
     /**
-     * Y-coordinate of diff bottom right corner
+     * Y-coordinate of bottom right corner
      */
     bottom: number;
+}
+
+/**
+ * bounded image
+ */
+interface BoundedImage {
+    /**
+     * image path or buffer
+     */
+    source: string | Buffer;
+    /**
+     * bounding coordinates
+     */
+    boundingBox: CoordBounds;
 }
 
 /**
@@ -37,7 +51,7 @@ interface LooksSameResult {
     /**
      * diff bounds for not equal images
      */
-    diffBounds?: DiffBounds;
+    diffBounds?: CoordBounds;
 }
 
 type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
@@ -93,13 +107,13 @@ interface LooksSameOptions {
  */
 interface CreateDiffAsBufferOptions {
     /**
-     * The baseline image path
+     * The baseline image
      */
-    reference: string;
+    reference: string | Buffer | BoundedImage;
     /**
-     * The current image path
+     * The current image
      */
-    current: string;
+    current: string | Buffer | BoundedImage;
     /**
      * Color to highlight the differences
      * e.g. '#ff00ff'
@@ -157,19 +171,28 @@ interface Color {
 
 /**
  * Compare two images with options
- * @param image1 The first image path
- * @param image2 The second image path
+ * @param image1 The first image
+ * @param image2 The second image
  * @param options The options passed to looksSame function
  * @param callback Call when finish compare
  */
-declare function looksSame(image1: string, image2: string, options: LooksSameOptions, callback: LooksSameCallback): void;
+declare function looksSame(
+    image1: string | Buffer | BoundedImage,
+    image2: string | Buffer | BoundedImage,
+    options: LooksSameOptions,
+    callback: LooksSameCallback
+): void;
 /**
  * Compare two images
- * @param image1 The first image path
- * @param image2 The second image path
+ * @param image1 The first image
+ * @param image2 The second image
  * @param callback Call when finish compare
  */
-declare function looksSame(image1: string, image2: string, callback: LooksSameCallback): void;
+declare function looksSame(
+    image1: string | Buffer | BoundedImage,
+    image2: string | Buffer | BoundedImage,
+    callback: LooksSameCallback
+): void;
 
 // https://stackoverflow.com/questions/44058101/typescript-declare-third-party-modules
 declare module looksSame {
