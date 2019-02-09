@@ -8,10 +8,8 @@ const areColorsSame = require('./lib/same-colors');
 const AntialiasingComparator = require('./lib/antialiasing-comparator');
 const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
 const utils = require('./lib/utils');
-const readPair = utils.readPair;
-const getDiffPixelsCoords = utils.getDiffPixelsCoords;
-
-const JND = 2.3; // Just noticeable difference if ciede2000 >= JND then colors difference is noticeable by human eye
+const {getDiffPixelsCoords} = utils;
+const {JND} = require('./lib/constants');
 
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
     const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2, opts);
@@ -120,36 +118,40 @@ const getToleranceFromOpts = (opts) => {
 const prepareOpts = (opts) => {
     opts.tolerance = getToleranceFromOpts(opts);
 
-    _.defaults(opts, {
+    return _.defaults(opts, {
         ignoreCaret: true,
         ignoreAntialiasing: true,
         antialiasingTolerance: 0
     });
 };
 
-const getMaxDiffBounds = (first, second) => ({
-    left: 0,
-    top: 0,
-    right: Math.max(first.width, second.width) - 1,
-    bottom: Math.max(first.height, second.height) - 1
-});
+const getMaxDiffBounds = (first, second) => {
+    const {x: left, y: top} = first.getActualCoord(0, 0);
 
-module.exports = exports = function looksSame(reference, image, opts, callback) {
+    return {
+        left,
+        top,
+        right: left + Math.max(first.width, second.width) - 1,
+        bottom: top + Math.max(first.height, second.height) - 1
+    };
+};
+
+module.exports = exports = function looksSame(image1, image2, opts, callback) {
     if (!callback) {
         callback = opts;
         opts = {};
     }
 
-    prepareOpts(opts);
+    opts = prepareOpts(opts);
+    [image1, image2] = utils.formatImages(image1, image2);
 
-    readPair(reference, image, (error, pair) => {
+    utils.readPair(image1, image2, (error, pair) => {
         if (error) {
             return callback(error);
         }
 
-        const first = pair.first;
-        const second = pair.second;
-        const refImg = {size: {width: pair.first.width, height: pair.first.height}};
+        const {first, second} = pair;
+        const refImg = {size: {width: first.width, height: first.height}};
         const metaInfo = {refImg};
 
         if (first.width !== second.width || first.height !== second.height) {
@@ -167,21 +169,21 @@ module.exports = exports = function looksSame(reference, image, opts, callback) 
     });
 };
 
-exports.getDiffArea = function(reference, image, opts, callback) {
+exports.getDiffArea = function(image1, image2, opts, callback) {
     if (!callback) {
         callback = opts;
         opts = {};
     }
 
-    prepareOpts(opts);
+    opts = prepareOpts(opts);
+    [image1, image2] = utils.formatImages(image1, image2);
 
-    readPair(reference, image, (error, pair) => {
+    utils.readPair(image1, image2, (error, pair) => {
         if (error) {
             return callback(error);
         }
 
-        const first = pair.first;
-        const second = pair.second;
+        const {first, second} = pair;
 
         if (first.width !== second.width || first.height !== second.height) {
             return process.nextTick(() => callback(null, getMaxDiffBounds(first, second)));
@@ -200,9 +202,11 @@ exports.getDiffArea = function(reference, image, opts, callback) {
 };
 
 exports.createDiff = function saveDiff(opts, callback) {
-    prepareOpts(opts);
+    opts = prepareOpts(opts);
 
-    readPair(opts.reference, opts.current, (error, {first, second}) => {
+    const [image1, image2] = utils.formatImages(opts.reference, opts.current);
+
+    utils.readPair(image1, image2, (error, {first, second}) => {
         if (error) {
             return callback(error);
         }

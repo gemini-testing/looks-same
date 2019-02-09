@@ -7,8 +7,7 @@ const expect = require('chai').expect;
 
 const looksSame = require('..');
 const utils = require('../lib/utils');
-const readPair = utils.readPair;
-const getDiffPixelsCoords = utils.getDiffPixelsCoords;
+const {readPair, formatImages, getDiffPixelsCoords} = utils;
 const areColorsSame = require('../lib/same-colors');
 
 const imagePath = (name) => path.join(__dirname, 'data', name);
@@ -28,6 +27,12 @@ const forFilesAndBuffers = (callback) => {
 };
 
 describe('looksSame', () => {
+    const sandbox = sinon.createSandbox();
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
     it('should throw if both tolerance and strict options set', () => {
         expect(() => {
             looksSame(srcPath('ref.png'), srcPath('same.png'), {
@@ -35,6 +40,26 @@ describe('looksSame', () => {
                 tolerance: 9000
             }, () => {});
         }).to.throw(TypeError);
+    });
+
+    it('should format images', (done) => {
+        sandbox.spy(utils, 'formatImages');
+
+        looksSame(srcPath('ref.png'), srcPath('same.png'), () => {
+            assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
+            done();
+        });
+    });
+
+    it('should read formatted images', (done) => {
+        const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
+        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sandbox.spy(utils, 'readPair');
+
+        looksSame(srcPath('ref.png'), srcPath('same.png'), () => {
+            assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);
+            done();
+        });
     });
 
     forFilesAndBuffers((getImage) => {
@@ -143,6 +168,74 @@ describe('looksSame', () => {
                 expect(error).to.equal(null);
                 expect(equal).to.equal(false);
                 done();
+            });
+        });
+    });
+
+    describe('with comparing by areas', () => {
+        forFilesAndBuffers((getImage) => {
+            describe('if passed areas have different sizes', () => {
+                it('should return "false"', (done) => {
+                    looksSame(
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 2, bottom: 1}},
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 5, top: 5, right: 5, bottom: 6}},
+                        (error, {equal}) => {
+                            assert.isNull(error);
+                            assert.isFalse(equal);
+                            done();
+                        }
+                    );
+                });
+
+                it('should return diff bound for first image equal to a bigger area', (done) => {
+                    looksSame(
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 2, bottom: 1}},
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 5, top: 5, right: 5, bottom: 6}},
+                        (error, {diffBounds}) => {
+                            assert.isNull(error);
+                            assert.deepEqual(diffBounds, {left: 1, top: 1, right: 2, bottom: 2});
+                            done();
+                        }
+                    );
+                });
+            });
+
+            describe('if passed areas have the same sizes but located in various places', () => {
+                it('should return true if images are equal', (done) => {
+                    looksSame(
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
+                        {source: getImage('bounding-box-diff-2.png'), boundingBox: {left: 5, top: 5, right: 8, bottom: 8}},
+                        (error, {equal}) => {
+                            assert.isNull(error);
+                            assert.isTrue(equal);
+                            done();
+                        }
+                    );
+                });
+
+                it('should return false if images are different', (done) => {
+                    looksSame(
+                        {source: getImage('bounding-box-ref-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
+                        {source: getImage('bounding-box-ref-2.png'), boundingBox: {left: 5, top: 5, right: 8, bottom: 8}},
+                        (error, {equal}) => {
+                            assert.isNull(error);
+                            assert.isFalse(equal);
+                            done();
+                        }
+                    );
+                });
+
+                it('should return diff bound for first image if images are different', (done) => {
+                    looksSame(
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 2, bottom: 1}},
+                        {source: getImage('bounding-box-diff-1.png'), boundingBox: {left: 5, top: 5, right: 5, bottom: 6}},
+                        (error, {diffBounds}) => {
+                            assert.isNull(error);
+                            assert.deepEqual(diffBounds, {left: 1, top: 1, right: 2, bottom: 2});
+                            done();
+                        }
+                    );
+                });
             });
         });
     });
@@ -269,6 +362,8 @@ describe('looksSame', () => {
 });
 
 describe('createDiff', () => {
+    const sandbox = sinon.createSandbox();
+
     beforeEach(() => {
         this.tempName = temp.path({suffix: '.png'});
     });
@@ -277,6 +372,8 @@ describe('createDiff', () => {
         if (fs.existsSync(this.tempName)) {
             fs.unlinkSync(this.tempName);
         }
+
+        sandbox.restore();
     });
 
     it('should throw if both tolerance and strict options set', () => {
@@ -290,6 +387,36 @@ describe('createDiff', () => {
                 strict: true
             }, () => {});
         }).to.throw(TypeError);
+    });
+
+    it('should format images', (done) => {
+        sandbox.spy(utils, 'formatImages');
+
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('same.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        }, () => {
+            assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
+            done();
+        });
+    });
+
+    it('should read formatted images', (done) => {
+        const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
+        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sandbox.spy(utils, 'readPair');
+
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('same.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        }, () => {
+            assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);
+            done();
+        });
     });
 
     it('should copy a reference image if there is no difference', (done) => {
@@ -447,6 +574,27 @@ describe('createDiff', () => {
             looksSame(imagePath('diffs/small-magenta.png'), buffer, (error, {equal}) => {
                 expect(equal).to.be.equal(true);
                 done();
+            });
+        });
+    });
+
+    describe('with comparing by areas', () => {
+        it('should create diff image equal to reference', (done) => {
+            looksSame.createDiff({
+                reference: {source: srcPath('bounding-box-ref-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
+                current: {source: srcPath('bounding-box-ref-2.png'), boundingBox: {left: 5, top: 5, right: 8, bottom: 8}},
+                diff: this.tempName,
+                highlightColor: '#FF00FF'
+            }, () => {
+                looksSame(
+                    {source: srcPath('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
+                    this.tempName,
+                    (error, {equal}) => {
+                        assert.isNull(error);
+                        assert.isTrue(equal, true);
+                        done();
+                    }
+                );
             });
         });
     });
@@ -640,6 +788,30 @@ describe('colors', () => {
 });
 
 describe('getDiffArea', () => {
+    const sandbox = sinon.createSandbox();
+
+    afterEach(() => sandbox.restore());
+
+    it('should format images', (done) => {
+        sandbox.spy(utils, 'formatImages');
+
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), () => {
+            assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
+            done();
+        });
+    });
+
+    it('should read formatted images', (done) => {
+        const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
+        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sandbox.spy(utils, 'readPair');
+
+        looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), () => {
+            assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);
+            done();
+        });
+    });
+
     it('should return null for similar images', (done) => {
         looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), (error, result) => {
             expect(error).to.equal(null);
@@ -686,7 +858,9 @@ describe('getDiffArea', () => {
 
 describe('getDiffPixelsCoords', () => {
     it('should return all diff area by default', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
+        const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
+
+        readPair(img1, img2, (error, pair) => {
             getDiffPixelsCoords(pair.first, pair.second, areColorsSame, (result) => {
                 expect(result.area).to.deep.equal({left: 0, top: 0, right: 49, bottom: 39});
                 done();
@@ -695,7 +869,9 @@ describe('getDiffPixelsCoords', () => {
     });
 
     it('should return first non-matching pixel if asked for', (done) => {
-        readPair(srcPath('ref.png'), srcPath('different.png'), (error, pair) => {
+        const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
+
+        readPair(img1, img2, (error, pair) => {
             getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, (result) => {
                 expect(result.area).to.deep.equal({left: 49, top: 0, right: 49, bottom: 0});
                 done();
