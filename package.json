@@ -24,6 +24,7 @@
     "mocha": "^5.2.0",
     "proxyquire": "^1.7.10",
     "sinon": "^6.1.5",
+    "sinon-chai": "^3.3.0",
     "temp": "^0.8.3"
   },
   "scripts": {
@@ -33,7 +34,7 @@
     "bench": "matcha benchmark/*"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 8.0.0"
   },
   "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
   "license": "MIT",
