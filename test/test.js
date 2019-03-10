@@ -861,8 +861,8 @@ describe('getDiffPixelsCoords', () => {
         const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
 
         readPair(img1, img2, (error, pair) => {
-            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, (result) => {
-                expect(result.area).to.deep.equal({left: 0, top: 0, right: 49, bottom: 39});
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, ({diffArea}) => {
+                expect(diffArea.area).to.deep.equal({left: 0, top: 0, right: 49, bottom: 39});
                 done();
             });
         });
@@ -872,8 +872,8 @@ describe('getDiffPixelsCoords', () => {
         const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
 
         readPair(img1, img2, (error, pair) => {
-            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, (result) => {
-                expect(result.area).to.deep.equal({left: 49, top: 0, right: 49, bottom: 0});
+            getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, ({diffArea}) => {
+                expect(diffArea.area).to.deep.equal({left: 49, top: 0, right: 49, bottom: 0});
                 done();
             });
         });

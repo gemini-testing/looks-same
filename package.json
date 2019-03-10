@@ -10,6 +10,7 @@
   "dependencies": {
     "color-diff": "^1.1.0",
     "concat-stream": "^1.6.2",
+    "js-graph-algorithms": "1.0.18",
     "lodash": "^4.17.3",
     "parse-color": "^1.0.0",
     "pngjs": "^3.3.3"

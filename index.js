@@ -159,12 +159,12 @@ module.exports = exports = function looksSame(image1, image2, opts, callback) {
         }
 
         const comparator = createComparator(first, second, opts);
-        const {stopOnFirstFail} = opts;
+        const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
 
-        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail}, (result) => {
-            const diffBounds = result.area;
+        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
+            const diffBounds = diffArea.area;
 
-            callback(null, {equal: result.isEmpty(), metaInfo, diffBounds});
+            callback(null, {equal: diffArea.isEmpty(), metaInfo, diffBounds, diffClusters});
         });
     });
 };
@@ -191,12 +191,12 @@ exports.getDiffArea = function(image1, image2, opts, callback) {
 
         const comparator = createComparator(first, second, opts);
 
-        getDiffPixelsCoords(first, second, comparator, opts, (result) => {
-            if (result.isEmpty()) {
+        getDiffPixelsCoords(first, second, comparator, opts, ({diffArea}) => {
+            if (diffArea.isEmpty()) {
                 return callback(null, null);
             }
 
-            callback(null, result.area);
+            callback(null, diffArea.area);
         });
     });
 };
