@@ -33,4 +33,26 @@ describe('DiffArea', () => {
             expect(diffArea.isEmpty()).to.equal(false);
         });
     });
+
+    describe('isPointInArea', () => {
+        it('should return "true" if point inside of area', () => {
+            const diffArea = new DiffArea();
+
+            diffArea
+                .update(1, 1)
+                .update(5, 5);
+
+            assert.isTrue(diffArea.isPointInArea(10, 10, 10));
+        });
+
+        it('should return "false" if point is outside of area', () => {
+            const diffArea = new DiffArea();
+
+            diffArea
+                .update(1, 1)
+                .update(5, 5);
+
+            expect(diffArea.isPointInArea(20, 20, 10)).to.equal(false);
+        });
+    });
 });

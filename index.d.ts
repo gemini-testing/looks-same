@@ -52,6 +52,10 @@ interface LooksSameResult {
      * diff bounds for not equal images
      */
     diffBounds?: CoordBounds;
+    /**
+     * diff clusters for not equal images
+     */
+    diffClusters?: CoordBounds[];
 }
 
 type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
@@ -100,6 +104,14 @@ interface LooksSameOptions {
      * Diff bounds will contain the whole diff if stopOnFirstFail is false and only first diff pixel - otherwise.
      */
     stopOnFirstFail?: boolean;
+    /**
+     * Responsible for diff bounds clustering
+     */
+    shouldCluster?: boolean;
+    /**
+     * Radius for every diff cluster
+     */
+    clustersSize?: number;
 }
 
 /**

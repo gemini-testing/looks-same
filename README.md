@@ -88,11 +88,18 @@ looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTol
 ### Getting diff bounds
 Looksame returns information about diff bounds. It returns only first pixel if you passed `stopOnFirstFail` option with `true` value. The whole diff area would be returned if `stopOnFirstFail` option is not passed or it's passed with `false` value.
 
+### Getting diff clusters
+Looksame returns diff bounds divided into clusters. You can pass clusters size using `clustersSize` option.
+
 ```javascript
-looksSame('image1.png', 'image2.png', {stopOnFirstFail: false}, function(error, {equal, diffBounds}) {
+looksSame('image1.png', 'image2.png', {stopOnFirstFail: false}, function(error, {equal, diffBounds, diffClusters}) {
     // {
     //     equal: false,
     //     diffBounds: {left: 10, top: 10, right: 20, bottom: 20}
+    //     diffClusters: [
+    //         {left: 10, top: 10, right: 14, bottom: 14},
+    //         {left: 16, top: 16, right: 20, bottom: 20}
+    //     ]
     // }
 });
 ```
