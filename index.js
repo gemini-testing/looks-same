@@ -94,7 +94,7 @@ const buildDiffImage = (png1, png2, options, callback) => {
 };
 
 const parseColorString = (str) => {
-    const parsed = parseColor(str);
+    const parsed = parseColor(str || '#ff00ff');
 
     return {
         R: parsed.rgb[0],

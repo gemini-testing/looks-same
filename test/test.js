@@ -493,6 +493,20 @@ describe('createDiff', () => {
         });
     });
 
+    it('should provide a default highlight color', (done) => {
+        const _this = this;
+        looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName
+        }, () => {
+            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, equal) => {
+                expect(equal).to.equal(true);
+                done();
+            });
+        });
+    });
+
     it('should allow to build diff for taller images', (done) => {
         const _this = this;
         looksSame.createDiff({
