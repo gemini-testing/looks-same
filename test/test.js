@@ -500,7 +500,7 @@ describe('createDiff', () => {
             current: srcPath('different.png'),
             diff: this.tempName
         }, () => {
-            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, equal) => {
+            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
