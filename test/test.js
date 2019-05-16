@@ -149,6 +149,15 @@ describe('looksSame', () => {
             });
         });
 
+        it('should return single diff cluster equal to a bigger image if images have different sizes', (done) => {
+            looksSame(srcPath('ref.png'), srcPath('large-different.png'), (error, {equal, diffClusters}) => {
+                expect(error).to.equal(null);
+                expect(equal).to.equal(false);
+                expect(diffClusters).to.deep.equal([{left: 0, top: 0, right: 499, bottom: 499}]);
+                done();
+            });
+        });
+
         [
             'red',
             'blue',
