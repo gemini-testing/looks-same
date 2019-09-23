@@ -181,6 +181,102 @@ describe('looksSame', () => {
         });
     });
 
+    describe('ignore areas', () => {
+        forFilesAndBuffers((getImage) => {
+            it('should ignore difference within ignore areas', (done) => {
+                const ignoreAreas = [{
+                    top: 10,
+                    height: 2,
+                    left: 0,
+                    width: 50
+                }];
+
+                looksSame(getImage('ref.png'), getImage('different.png'), {ignoreAreas}, (error, {diffBounds}) => {
+                    expect(diffBounds).to.deep.equal({left: 0, top: 26, right: 49, bottom: 39});
+                    done();
+                });
+            });
+
+            it('should ignore difference within all passed areas', (done) => {
+                const ignoreAreas = [
+                    {
+                        top: 10,
+                        height: 2,
+                        left: 0,
+                        width: 50
+                    },
+                    {
+                        top: 38,
+                        height: 2,
+                        left: 0,
+                        width: 50
+                    }
+                ];
+
+                looksSame(getImage('ref.png'), getImage('different.png'), {ignoreAreas}, (error, {diffBounds}) => {
+                    expect(diffBounds).to.deep.equal({left: 1, top: 26, right: 49, bottom: 27});
+                    done();
+                });
+            });
+
+            it('should return true if all differences are within ignore areas', (done) => {
+                const ignoreAreas = [
+                    {
+                        top: 10,
+                        height: 2,
+                        left: 0,
+                        width: 50
+                    },
+                    {
+                        top: 38,
+                        height: 2,
+                        left: 0,
+                        width: 50
+                    },
+                    {
+                        top: 26,
+                        height: 2,
+                        left: 0,
+                        width: 50
+                    }
+                ];
+
+                looksSame(getImage('ref.png'), getImage('different.png'), {ignoreAreas}, (error, {equal}) => {
+                    expect(equal).to.equal(true);
+                    done();
+                });
+            });
+
+            it('should return correct bounds if difference is partially within ignore area', (done) => {
+                const ignoreAreas = [
+                    {
+                        top: 10,
+                        height: 2,
+                        left: 20,
+                        width: 30
+                    },
+                    {
+                        top: 38,
+                        height: 2,
+                        left: 20,
+                        width: 30
+                    },
+                    {
+                        top: 26,
+                        height: 2,
+                        left: 20,
+                        width: 30
+                    }
+                ];
+
+                looksSame(getImage('ref.png'), getImage('different.png'), {ignoreAreas}, (error, {diffBounds}) => {
+                    expect(diffBounds).to.deep.equal({left: 0, top: 10, right: 19, bottom: 39});
+                    done();
+                });
+            });
+        });
+    });
+
     describe('with comparing by areas', () => {
         forFilesAndBuffers((getImage) => {
             describe('if passed areas have different sizes', () => {
