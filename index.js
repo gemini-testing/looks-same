@@ -50,10 +50,10 @@ const createComparator = (png1, png2, opts) => {
 
 const iterateRect = (width, height, areas, callback, endCallback) => {
     const processRow = (y) => {
-        const matchedAreas = areas.filter(yInArea(y));
+        const matchedAreas = areas.filter((area) => yInArea(area, y));
         setImmediate(() => {
             for (let x = 0; x < width; x++) {
-                callback(x, y, matchedAreas.some(xInArea(x)));
+                callback(x, y, matchedAreas.some((area) => xInArea(area, x)));
             }
 
             y++;
