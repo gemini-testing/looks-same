@@ -115,7 +115,7 @@ looksSame.createDiff({
     strict: false, // strict comparsion
     tolerance: 2.5,
     antialiasingTolerance: 0,
-    ignoreColor: '#f0ffff', // color to highlight ignored areas
+    ignoreAreaColor: '#f0ffff', // color to highlight ignored areas
     ignoreAreas: [], // list of areas to ignore, in form {top: 0, left: 0, width: 5, height: 5}
     ignoreAntialiasing: true, // ignore antialising by default
     ignoreCaret: true // ignore caret by default
