@@ -77,7 +77,6 @@ const buildDiffImage = (png1, png2, options, callback) => {
     const highlightColor = options.highlightColor;
     const result = png.empty(width, height);
     const ignoreAreas = options.ignoreAreas || [];
-    const ignoredOverlay = options.ignoreAreasColor;
     const blend = (a, b, k) => {
         return {
             R: a.R * k + b.R * (1 - k),
@@ -96,7 +95,7 @@ const buildDiffImage = (png1, png2, options, callback) => {
         const color2 = png2.getPixel(x, y);
 
         if (isIgnored) {
-            result.setPixel(x, y, blend(ignoredOverlay, blend(color1, color2, 0.5), 0.5));
+            result.setPixel(x, y, blend(color1, color2, 0.5));
             return;
         }
 
@@ -228,7 +227,6 @@ exports.createDiff = function saveDiff(opts, callback) {
 
         const diffOptions = {
             ignoreAreas: opts.ignoreAreas,
-            ignoreAreasColor: parseColorString(opts.ignoreAreasColor || '#f0ffff'),
             highlightColor: parseColorString(opts.highlightColor || '#ff00ff'),
             comparator: createComparator(first, second, opts)
         };
