@@ -85,6 +85,24 @@ looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTol
 });
 ```
 
+### Comparing images with ignoring part of area
+
+Sometimes is usefull to ignore some part of an image in comparision. Such areas could be passed as `ignoreAreas` option. Each area should be an object with `left`, `top`, `width` and `height` properties. Notice that values must be scaled appropriate to pixelRatio beforehand.
+
+Example:
+```javascript
+looksSame('image1.png', 'image2.png', {ignoreAreas: [
+        {
+            top: 0,
+            left: 5,
+            width: 100,
+            height: 50
+        }
+    ]}, function(error, {equal}) {
+    ...
+});
+```
+
 ### Getting diff bounds
 Looksame returns information about diff bounds. It returns only first pixel if you passed `stopOnFirstFail` option with `true` value. The whole diff area would be returned if `stopOnFirstFail` option is not passed or it's passed with `false` value.
 
@@ -115,6 +133,7 @@ looksSame.createDiff({
     strict: false, // strict comparsion
     tolerance: 2.5,
     antialiasingTolerance: 0,
+    ignoreAreas: [], // list of areas to ignore, in form {top: 0, left: 0, width: 5, height: 5}
     ignoreAntialiasing: true, // ignore antialising by default
     ignoreCaret: true // ignore caret by default
 }, function(error) {

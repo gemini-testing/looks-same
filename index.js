@@ -8,7 +8,7 @@ const areColorsSame = require('./lib/same-colors');
 const AntialiasingComparator = require('./lib/antialiasing-comparator');
 const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
 const utils = require('./lib/utils');
-const {getDiffPixelsCoords} = utils;
+const {getDiffPixelsCoords, yInArea, xInArea} = utils;
 const {JND} = require('./lib/constants');
 
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
@@ -48,11 +48,12 @@ const createComparator = (png1, png2, opts) => {
     return comparator;
 };
 
-const iterateRect = (width, height, callback, endCallback) => {
+const iterateRect = (width, height, areas, callback, endCallback) => {
     const processRow = (y) => {
+        const matchedAreas = areas.filter((area) => yInArea(area, y));
         setImmediate(() => {
             for (let x = 0; x < width; x++) {
-                callback(x, y);
+                callback(x, y, matchedAreas.some((area) => xInArea(area, x)));
             }
 
             y++;
@@ -75,8 +76,16 @@ const buildDiffImage = (png1, png2, options, callback) => {
     const minHeight = Math.min(png1.height, png2.height);
     const highlightColor = options.highlightColor;
     const result = png.empty(width, height);
+    const ignoreAreas = options.ignoreAreas || [];
+    const blend = (a, b, k) => {
+        return {
+            R: a.R * k + b.R * (1 - k),
+            G: a.G * k + b.G * (1 - k),
+            B: a.B * k + b.B * (1 - k)
+        };
+    };
 
-    iterateRect(width, height, (x, y) => {
+    iterateRect(width, height, ignoreAreas, (x, y, isIgnored) => {
         if (x >= minWidth || y >= minHeight) {
             result.setPixel(x, y, highlightColor);
             return;
@@ -84,6 +93,11 @@ const buildDiffImage = (png1, png2, options, callback) => {
 
         const color1 = png1.getPixel(x, y);
         const color2 = png2.getPixel(x, y);
+
+        if (isIgnored) {
+            result.setPixel(x, y, blend(color1, color2, 0.5));
+            return;
+        }
 
         if (!options.comparator({color1, color2, png1, png2, x, y, width, height})) {
             result.setPixel(x, y, highlightColor);
@@ -94,7 +108,7 @@ const buildDiffImage = (png1, png2, options, callback) => {
 };
 
 const parseColorString = (str) => {
-    const parsed = parseColor(str || '#ff00ff');
+    const parsed = parseColor(str);
 
     return {
         R: parsed.rgb[0],
@@ -160,11 +174,10 @@ module.exports = exports = function looksSame(image1, image2, opts, callback) {
         }
 
         const comparator = createComparator(first, second, opts);
-        const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
+        const {stopOnFirstFail, shouldCluster, clustersSize, ignoreAreas} = opts;
 
-        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
+        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, ignoreAreas, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
             const diffBounds = diffArea.area;
-
             callback(null, {equal: diffArea.isEmpty(), metaInfo, diffBounds, diffClusters});
         });
     });
@@ -213,7 +226,8 @@ exports.createDiff = function saveDiff(opts, callback) {
         }
 
         const diffOptions = {
-            highlightColor: parseColorString(opts.highlightColor),
+            ignoreAreas: opts.ignoreAreas,
+            highlightColor: parseColorString(opts.highlightColor || '#ff00ff'),
             comparator: createComparator(first, second, opts)
         };
 
