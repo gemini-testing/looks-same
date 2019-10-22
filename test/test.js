@@ -883,7 +883,7 @@ describe('getDiffPixelsCoords', () => {
     it('should return all diff area by default', (done) => {
         const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
 
-        readPair(img1, img2, (error, pair) => {
+        readPair(img1, img2).then(pair => {
             getDiffPixelsCoords(pair.first, pair.second, areColorsSame, ({diffArea}) => {
                 expect(diffArea.area).to.deep.equal({left: 0, top: 0, right: 49, bottom: 39});
                 done();
@@ -894,7 +894,7 @@ describe('getDiffPixelsCoords', () => {
     it('should return first non-matching pixel if asked for', (done) => {
         const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
 
-        readPair(img1, img2, (error, pair) => {
+        readPair(img1, img2).then(pair => {
             getDiffPixelsCoords(pair.first, pair.second, areColorsSame, {stopOnFirstFail: true}, ({diffArea}) => {
                 expect(diffArea.area).to.deep.equal({left: 49, top: 0, right: 49, bottom: 0});
                 done();

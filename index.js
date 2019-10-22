@@ -145,29 +145,29 @@ module.exports = exports = function looksSame(image1, image2, opts, callback) {
     opts = prepareOpts(opts);
     [image1, image2] = utils.formatImages(image1, image2);
 
-    utils.readPair(image1, image2, (error, pair) => {
-        if (error) {
-            return callback(error);
-        }
+    utils
+        .readPair(image1, image2)
+        .then(({first, second}) => {
+            const refImg = {size: {width: first.width, height: first.height}};
+            const metaInfo = {refImg};
 
-        const {first, second} = pair;
-        const refImg = {size: {width: first.width, height: first.height}};
-        const metaInfo = {refImg};
+            if (first.width !== second.width || first.height !== second.height) {
+                const diffBounds = getMaxDiffBounds(first, second);
+                return process.nextTick(() => callback(null, {equal: false, metaInfo, diffBounds, diffClusters: [diffBounds]}));
+            }
 
-        if (first.width !== second.width || first.height !== second.height) {
-            const diffBounds = getMaxDiffBounds(first, second);
-            return process.nextTick(() => callback(null, {equal: false, metaInfo, diffBounds, diffClusters: [diffBounds]}));
-        }
+            const comparator = createComparator(first, second, opts);
+            const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
 
-        const comparator = createComparator(first, second, opts);
-        const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
+            getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
+                const diffBounds = diffArea.area;
 
-        getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
-            const diffBounds = diffArea.area;
-
-            callback(null, {equal: diffArea.isEmpty(), metaInfo, diffBounds, diffClusters});
+                callback(null, {equal: diffArea.isEmpty(), metaInfo, diffBounds, diffClusters});
+            });
+        })
+        .catch(error => {
+            callback(error);
         });
-    });
 };
 
 exports.getDiffArea = function(image1, image2, opts, callback) {
@@ -179,27 +179,26 @@ exports.getDiffArea = function(image1, image2, opts, callback) {
     opts = prepareOpts(opts);
     [image1, image2] = utils.formatImages(image1, image2);
 
-    utils.readPair(image1, image2, (error, pair) => {
-        if (error) {
-            return callback(error);
-        }
-
-        const {first, second} = pair;
-
-        if (first.width !== second.width || first.height !== second.height) {
-            return process.nextTick(() => callback(null, getMaxDiffBounds(first, second)));
-        }
-
-        const comparator = createComparator(first, second, opts);
-
-        getDiffPixelsCoords(first, second, comparator, opts, ({diffArea}) => {
-            if (diffArea.isEmpty()) {
-                return callback(null, null);
+    utils
+        .readPair(image1, image2)
+        .then(({first, second}) => {
+            if (first.width !== second.width || first.height !== second.height) {
+                return process.nextTick(() => callback(null, getMaxDiffBounds(first, second)));
             }
 
-            callback(null, diffArea.area);
+            const comparator = createComparator(first, second, opts);
+
+            getDiffPixelsCoords(first, second, comparator, opts, ({diffArea}) => {
+                if (diffArea.isEmpty()) {
+                    return callback(null, null);
+                }
+
+                callback(null, diffArea.area);
+            });
+        })
+        .catch(error => {
+            callback(error);
         });
-    });
 };
 
 exports.createDiff = function saveDiff(opts, callback) {
@@ -207,24 +206,25 @@ exports.createDiff = function saveDiff(opts, callback) {
 
     const [image1, image2] = utils.formatImages(opts.reference, opts.current);
 
-    utils.readPair(image1, image2, (error, {first, second}) => {
-        if (error) {
-            return callback(error);
-        }
+    utils
+        .readPair(image1, image2)
+        .then(({first, second}) => {
+            const diffOptions = {
+                highlightColor: parseColorString(opts.highlightColor),
+                comparator: createComparator(first, second, opts)
+            };
 
-        const diffOptions = {
-            highlightColor: parseColorString(opts.highlightColor),
-            comparator: createComparator(first, second, opts)
-        };
-
-        buildDiffImage(first, second, diffOptions, (result) => {
-            if (opts.diff === undefined) {
-                result.createBuffer(callback);
-            } else {
-                result.save(opts.diff, callback);
-            }
+            buildDiffImage(first, second, diffOptions, (result) => {
+                if (opts.diff === undefined) {
+                    result.createBuffer(callback);
+                } else {
+                    result.save(opts.diff, callback);
+                }
+            });
+        })
+        .catch(error => {
+            callback(error);
         });
-    });
 };
 
 exports.colors = (color1, color2, opts) => {
