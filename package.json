@@ -29,13 +29,15 @@
     "proxyquire": "^1.7.10",
     "sinon": "^6.1.5",
     "sinon-chai": "^3.3.0",
+    "standard-version": "^7.0.0",
     "temp": "^0.8.3"
   },
   "scripts": {
     "test-unit": "mocha",
     "lint": "eslint .",
     "test": "npm run test-unit && npm run lint",
-    "bench": "matcha benchmark/*"
+    "bench": "matcha benchmark/*",
+    "release": "standard-version"
   },
   "engines": {
     "node": ">= 8.0.0"
