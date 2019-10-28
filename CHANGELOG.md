@@ -1,5 +1,14 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [7.2.2](https://github.com/gemini-testing/looks-same/compare/v7.2.1...v7.2.2) (2019-10-28)
+
+
+### Bug Fixes
+
+* unknown file path in parse png error ([15898d4](https://github.com/gemini-testing/looks-same/commit/15898d4832d7f7ddbf50eab1704ec9bcd093c394))
+
 ## 4.1.0 - 2018-12-05
 
 * add ability to ignore antialiasing and caret in "createDiff" method
