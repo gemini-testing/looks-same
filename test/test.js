@@ -62,6 +62,15 @@ describe('looksSame', () => {
         });
     });
 
+    it('should not modify input options', (done) => {
+        const opts = {};
+
+        looksSame(srcPath('ref.png'), srcPath('same.png'), opts, () => {
+            expect(Object.keys(opts)).to.deep.equal([]);
+            done();
+        });
+    });
+
     forFilesAndBuffers((getImage) => {
         it('should return true for similar images', (done) => {
             looksSame(getImage('ref.png'), getImage('same.png'), (error, {equal}) => {
@@ -396,6 +405,24 @@ describe('createDiff', () => {
                 strict: true
             }, () => {});
         }).to.throw(TypeError);
+    });
+
+    it('should not modify input options', (done) => {
+        const opts = {
+            reference: srcPath('ref.png'),
+            current: srcPath('same.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        };
+
+        looksSame.createDiff(opts, () => {
+            expect(Object.keys(opts)).to.deep.equal(
+                ['reference', 'current', 'diff', 'highlightColor']
+            );
+            done();
+        });
+
+        // If we got here, the call didn't attempt to modify opts
     });
 
     it('should format images', (done) => {
@@ -762,6 +789,17 @@ describe('createDiff', () => {
 });
 
 describe('colors', () => {
+    it('should not modify input options', () => {
+        const opts = {};
+
+        looksSame.colors(
+            {R: 255, G: 0, B: 0},
+            {R: 255, G: 0, B: 0},
+            opts);
+
+        expect(Object.keys(opts)).to.deep.equal([]);
+    });
+
     it('should return true for same colors', () => {
         expect(
             looksSame.colors(
