@@ -42,6 +42,12 @@ describe('looksSame', () => {
         }).to.throw(TypeError);
     });
 
+    it('should work when opts is undefined', () => {
+        expect(() => {
+            looksSame(srcPath('ref.png'), srcPath('same.png'), undefined, () => {});
+        }).not.to.throw(TypeError);
+    });
+
     it('should format images', (done) => {
         sandbox.spy(utils, 'formatImages');
 

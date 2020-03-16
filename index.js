@@ -116,6 +116,7 @@ const getToleranceFromOpts = (opts) => {
 };
 
 const prepareOpts = (opts) => {
+    opts = opts || {};
     opts.tolerance = getToleranceFromOpts(opts);
 
     return _.defaults(opts, {
