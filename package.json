@@ -2,8 +2,11 @@
   "name": "looks-same",
   "version": "7.2.3",
   "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
-  "main": "build/index.js",
-  "types": "index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "files": [
+    "build/src"
+  ],
   "directories": {
     "test": "test"
   },
