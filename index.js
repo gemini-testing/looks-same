@@ -116,12 +116,13 @@ const getToleranceFromOpts = (opts) => {
 };
 
 const prepareOpts = (opts) => {
-    opts.tolerance = getToleranceFromOpts(opts);
+    const tolerance = getToleranceFromOpts(opts);
 
-    return _.defaults(opts, {
+    return _.defaults({}, opts, {
         ignoreCaret: true,
         ignoreAntialiasing: true,
-        antialiasingTolerance: 0
+        antialiasingTolerance: 0,
+        tolerance: tolerance
     });
 };
 
@@ -228,11 +229,7 @@ exports.createDiff = function saveDiff(opts, callback) {
 };
 
 exports.colors = (color1, color2, opts) => {
-    opts = opts || {};
-
-    if (opts.tolerance === undefined) {
-        opts.tolerance = JND;
-    }
+    opts = _.defaults({}, opts, {tolerance: JND});
 
     const comparator = makeCIEDE2000Comparator(opts.tolerance);
 
