@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^13.13.0",
+    "app-module-path": "^2.2.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.3.0",
@@ -36,11 +37,11 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && ./bin/copy-additional-files-to-build.sh",
     "clean": "rimraf build/ *.tsbuildinfo",
     "prepare": "npm run clean && npm run build",
     "test": "npm run build && npm run test-unit && npm run lint",
-    "test-unit": "mocha",
+    "test-unit": "mocha build/test --recursive --require ./build/test/setup --require ./build/test/assert-ext",
     "lint": "eslint .",
     "release": "standard-version"
   },

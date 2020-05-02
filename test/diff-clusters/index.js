@@ -1,8 +1,8 @@
 'use strict';
 
-const DiffArea = require('../../lib/diff-area');
-const DiffClusters = require('../../lib/diff-clusters');
-const clustersJoiner = require('../../lib/diff-clusters/clusters-joiner');
+const DiffArea = require('src/lib/diff-area');
+const DiffClusters = require('src/lib/diff-clusters');
+const clustersJoiner = require('src/lib/diff-clusters/clusters-joiner');
 
 describe('DiffClusters', () => {
     const sandbox = sinon.createSandbox();

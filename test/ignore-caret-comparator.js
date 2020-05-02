@@ -58,7 +58,7 @@ describe('IgnoreCaretComparator', () => {
             .returns(true);
         areColorsSame['@global'] = true;
 
-        IgnoreCaretComparator = proxyquire('../lib/ignore-caret-comparator', {
+        IgnoreCaretComparator = proxyquire('src/lib/ignore-caret-comparator', {
             '../../same-colors': areColorsSame
         });
     });

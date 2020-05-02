@@ -3,7 +3,7 @@
 const sinon = require('sinon');
 const fs = require('fs-extra');
 const {PNG} = require('pngjs');
-const {fromFile} = require('../../lib/png/index');
+const {fromFile} = require('src/lib/png/index');
 
 const stubBuffer = Buffer.from([123]);
 

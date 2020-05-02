@@ -5,10 +5,10 @@ const fs = require('fs');
 const temp = require('temp');
 const expect = require('chai').expect;
 
-const looksSame = require('..');
-const utils = require('../lib/utils');
+const looksSame = require('src/index');
+const utils = require('src/lib/utils');
 const {readPair, formatImages, getDiffPixelsCoords} = utils;
-const areColorsSame = require('../lib/same-colors');
+const areColorsSame = require('src/lib/same-colors');
 
 const imagePath = (name) => path.join(__dirname, 'data', name);
 

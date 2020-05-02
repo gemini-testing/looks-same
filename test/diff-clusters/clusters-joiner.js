@@ -1,6 +1,6 @@
 'use strict';
 
-const clustersJoiner = require('../../lib/diff-clusters/clusters-joiner');
+const clustersJoiner = require('src/lib/diff-clusters/clusters-joiner');
 
 describe('DiffClusters', () => {
     it('should join clusters', () => {

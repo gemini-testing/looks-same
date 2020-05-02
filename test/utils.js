@@ -1,7 +1,7 @@
 'use strict';
 
-const {formatImages} = require('../lib/utils');
-const validators = require('../lib/validators');
+const {formatImages} = require('src/lib/utils');
+const validators = require('src/lib/validators');
 
 describe('lib/utils', () => {
     const sandbox = sinon.createSandbox();
