@@ -1,9 +1,6 @@
-'use strict';
-
-const sinon = require('sinon');
-const fs = require('fs-extra');
-const {PNG} = require('pngjs');
-const {fromFile} = require('src/lib/png/index');
+import fs from 'fs-extra';
+import {PNG} from 'pngjs';
+import {fromFile} from '../../src/lib/png/index';
 
 const stubBuffer = Buffer.from([123]);
 

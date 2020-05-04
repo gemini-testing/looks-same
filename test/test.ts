@@ -1,14 +1,12 @@
-'use strict';
+import path from 'path';
+import fs from 'fs';
+import temp from 'temp';
+import {expect} from 'chai';
 
-const path = require('path');
-const fs = require('fs');
-const temp = require('temp');
-const expect = require('chai').expect;
-
-const looksSame = require('src/index');
-const utils = require('src/lib/utils');
+import looksSame from '../src/index';
+import areColorsSame from '../src/lib/same-colors';
+import * as utils from '../src/lib/utils';
 const {readPair, formatImages, getDiffPixelsCoords} = utils;
-const areColorsSame = require('src/lib/same-colors');
 
 const imagePath = (name) => path.join(__dirname, 'data', name);
 
@@ -378,14 +376,15 @@ describe('looksSame', () => {
 
 describe('createDiff', () => {
     const sandbox = sinon.createSandbox();
+    let tempName;
 
     beforeEach(() => {
-        this.tempName = temp.path({suffix: '.png'});
+        tempName = temp.path({suffix: '.png'});
     });
 
     afterEach(() => {
-        if (fs.existsSync(this.tempName)) {
-            fs.unlinkSync(this.tempName);
+        if (fs.existsSync(tempName)) {
+            fs.unlinkSync(tempName);
         }
 
         sandbox.restore();
@@ -396,7 +395,7 @@ describe('createDiff', () => {
             looksSame.createDiff({
                 reference: srcPath('ref.png'),
                 current: srcPath('different.png'),
-                diff: this.tempName,
+                diff: tempName,
                 highlightColor: '#ff00ff',
                 tolerance: 9000,
                 strict: true
@@ -410,7 +409,7 @@ describe('createDiff', () => {
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('same.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff'
         }, () => {
             assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
@@ -426,7 +425,7 @@ describe('createDiff', () => {
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('same.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff'
         }, () => {
             assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);
@@ -435,14 +434,13 @@ describe('createDiff', () => {
     });
 
     it('should copy a reference image if there is no difference', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('same.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff'
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, {equal}) => {
+            looksSame(srcPath('ref.png'), tempName, {strict: true}, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -450,28 +448,26 @@ describe('createDiff', () => {
     });
 
     it('should create an image file with diff between two images', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff'
         }, () => {
-            expect(fs.existsSync(_this.tempName)).to.equal(true);
+            expect(fs.existsSync(tempName)).to.equal(true);
             done();
         });
     });
 
     it('should ignore the differences lower then tolerance', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff',
             tolerance: 50
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, {strict: true}, (error, {equal}) => {
+            looksSame(srcPath('ref.png'), tempName, {strict: true}, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -479,14 +475,13 @@ describe('createDiff', () => {
     });
 
     it('should create a proper diff', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#ff00ff'
         }, () => {
-            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/small-magenta.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -494,14 +489,13 @@ describe('createDiff', () => {
     });
 
     it('should allow to change highlight color', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#00FF00'
         }, () => {
-            looksSame(imagePath('diffs/small-green.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/small-green.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -509,13 +503,12 @@ describe('createDiff', () => {
     });
 
     it('should provide a default highlight color', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different.png'),
-            diff: this.tempName
+            diff: tempName
         }, () => {
-            looksSame(imagePath('diffs/small-magenta.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/small-magenta.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -523,14 +516,13 @@ describe('createDiff', () => {
     });
 
     it('should allow to build diff for taller images', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('tall-different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/taller-magenta.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/taller-magenta.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -538,14 +530,13 @@ describe('createDiff', () => {
     });
 
     it('should allow to build diff for wider images', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('wide-different.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/wider-magenta.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/wider-magenta.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -553,14 +544,13 @@ describe('createDiff', () => {
     });
 
     it('should use non-strict comparator by default', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different-unnoticable.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(srcPath('ref.png'), _this.tempName, (error, {equal}) => {
+            looksSame(srcPath('ref.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -568,15 +558,14 @@ describe('createDiff', () => {
     });
 
     it('should use strict comparator if strict option is true', (done) => {
-        const _this = this;
         looksSame.createDiff({
             reference: srcPath('ref.png'),
             current: srcPath('different-unnoticable.png'),
-            diff: this.tempName,
+            diff: tempName,
             strict: true,
             highlightColor: '#FF00FF'
         }, () => {
-            looksSame(imagePath('diffs/strict.png'), _this.tempName, (error, {equal}) => {
+            looksSame(imagePath('diffs/strict.png'), tempName, (error, {equal}) => {
                 expect(equal).to.equal(true);
                 done();
             });
@@ -612,15 +601,15 @@ describe('createDiff', () => {
             looksSame.createDiff({
                 reference: {source: srcPath('bounding-box-ref-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
                 current: {source: srcPath('bounding-box-ref-2.png'), boundingBox: {left: 5, top: 5, right: 8, bottom: 8}},
-                diff: this.tempName,
+                diff: tempName,
                 highlightColor: '#FF00FF'
             }, () => {
                 looksSame(
                     {source: srcPath('bounding-box-diff-1.png'), boundingBox: {left: 1, top: 1, right: 4, bottom: 4}},
-                    this.tempName,
+                    tempName,
                     (error, {equal}) => {
                         assert.isNull(error);
-                        assert.isTrue(equal, true);
+                        assert.isTrue(equal);
                         done();
                     }
                 );
@@ -634,11 +623,11 @@ describe('createDiff', () => {
                 looksSame.createDiff({
                     reference: srcPath('antialiasing-ref.png'),
                     current: srcPath('antialiasing-actual.png'),
-                    diff: this.tempName,
+                    diff: tempName,
                     highlightColor: '#FF00FF'
                 }, () => {
                     looksSame(
-                        srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
+                        srcPath('antialiasing-ref.png'), tempName, {ignoreAntialiasing: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
@@ -652,12 +641,12 @@ describe('createDiff', () => {
                 looksSame.createDiff({
                     reference: srcPath('antialiasing-ref.png'),
                     current: srcPath('antialiasing-actual.png'),
-                    diff: this.tempName,
+                    diff: tempName,
                     highlightColor: '#FF00FF',
                     ignoreAntialiasing: false
                 }, () => {
                     looksSame(
-                        srcPath('antialiasing-ref.png'), this.tempName, {ignoreAntialiasing: false},
+                        srcPath('antialiasing-ref.png'), tempName, {ignoreAntialiasing: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
@@ -672,11 +661,11 @@ describe('createDiff', () => {
             looksSame.createDiff({
                 reference: srcPath('no-caret.png'),
                 current: srcPath('1px-diff.png'),
-                diff: this.tempName,
+                diff: tempName,
                 highlightColor: '#FF00FF'
             }, () => {
                 looksSame(
-                    srcPath('antialiasing-ref.png'), this.tempName,
+                    srcPath('antialiasing-ref.png'), tempName,
                     (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
@@ -693,11 +682,11 @@ describe('createDiff', () => {
                 looksSame.createDiff({
                     reference: srcPath('no-caret.png'),
                     current: srcPath('caret.png'),
-                    diff: this.tempName,
+                    diff: tempName,
                     highlightColor: '#FF00FF'
                 }, () => {
                     looksSame(
-                        srcPath('no-caret.png'), this.tempName, {ignoreCaret: false},
+                        srcPath('no-caret.png'), tempName, {ignoreCaret: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(true);
@@ -711,12 +700,12 @@ describe('createDiff', () => {
                 looksSame.createDiff({
                     reference: srcPath('no-caret.png'),
                     current: srcPath('caret.png'),
-                    diff: this.tempName,
+                    diff: tempName,
                     highlightColor: '#FF00FF',
                     ignoreCaret: false
                 }, () => {
                     looksSame(
-                        srcPath('no-caret.png'), this.tempName, {ignoreCaret: false},
+                        srcPath('no-caret.png'), tempName, {ignoreCaret: false},
                         (error, {equal}) => {
                             expect(error).to.equal(null);
                             expect(equal).to.equal(false);
@@ -731,11 +720,11 @@ describe('createDiff', () => {
             looksSame.createDiff({
                 reference: srcPath('no-caret.png'),
                 current: srcPath('1px-diff.png'),
-                diff: this.tempName,
+                diff: tempName,
                 highlightColor: '#FF00FF'
             }, () => {
                 looksSame(
-                    srcPath('no-caret.png'), this.tempName,
+                    srcPath('no-caret.png'), tempName,
                     (error, {equal}) => {
                         expect(error).to.equal(null);
                         expect(equal).to.equal(false);
@@ -750,13 +739,13 @@ describe('createDiff', () => {
         looksSame.createDiff({
             reference: srcPath('caret+antialiasing.png'),
             current: srcPath('no-caret+antialiasing.png'),
-            diff: this.tempName,
+            diff: tempName,
             highlightColor: '#FF00FF',
             ignoreAntialiasing: true,
             ignoreCaret: true
         }, () => {
             looksSame(
-                srcPath('caret+antialiasing.png'), this.tempName, {ignoreAntialiasing: false},
+                srcPath('caret+antialiasing.png'), tempName, {ignoreAntialiasing: false},
                 (error, {equal}) => {
                     expect(error).to.equal(null);
                     expect(equal).to.equal(true);

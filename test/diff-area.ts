@@ -1,7 +1,5 @@
-'use strict';
-
-const expect = require('chai').expect;
-const DiffArea = require('src/lib/diff-area');
+import {expect} from 'chai';
+import DiffArea from '../src/lib/diff-area';
 
 describe('DiffArea', () => {
     it('should init diff area with default params', () => {

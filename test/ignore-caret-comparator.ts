@@ -1,9 +1,6 @@
-'use strict';
-
-const _ = require('lodash');
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const proxyquire = require('proxyquire');
+import _ from 'lodash';
+import proxyquire from 'proxyquire';
+import {expect} from 'chai';
 
 describe('IgnoreCaretComparator', () => {
     const sandbox = sinon.sandbox.create();
@@ -58,9 +55,9 @@ describe('IgnoreCaretComparator', () => {
             .returns(true);
         areColorsSame['@global'] = true;
 
-        IgnoreCaretComparator = proxyquire('src/lib/ignore-caret-comparator', {
+        IgnoreCaretComparator = proxyquire('../src/lib/ignore-caret-comparator', {
             '../../same-colors': areColorsSame
-        });
+        }).default;
     });
 
     afterEach(() => sandbox.restore());

@@ -1,7 +1,5 @@
-'use strict';
-
-const _ = require('lodash');
-const {validateImages} = require('src/lib/validators');
+import _ from 'lodash';
+import {validateImages} from '../src/lib/validators';
 
 describe('lib/validators', () => {
     describe('validateImages', () => {
