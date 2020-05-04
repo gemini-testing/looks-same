@@ -1,17 +1,17 @@
 'use strict';
 
-const _ = require('lodash');
-const png = require('./png');
-const DiffArea = require('./diff-area');
-const DiffClusters = require('./diff-clusters');
-const validators = require('./validators');
+import _ from 'lodash';
+import * as png from './png';
+import DiffArea from './diff-area';
+import DiffClusters from './diff-clusters';
+import {validateImages} from './validators';
 
 function read({source, ...opts}) {
     const readFunc = Buffer.isBuffer(source) ? png.fromBuffer : png.fromFile;
     return readFunc(source, opts);
 }
 
-exports.readPair = async (first, second) => {
+export const readPair = async (first, second) => {
     const [firstPng, secondPng] = await Promise.all([first, second].map(read));
 
     return {first: firstPng, second: secondPng};
@@ -21,7 +21,7 @@ const getDiffClusters = (diffClusters, diffArea, {shouldCluster}) => {
     return shouldCluster ? diffClusters.clusters : [diffArea.area];
 };
 
-exports.getDiffPixelsCoords = (png1, png2, predicate, opts, callback) => {
+export const getDiffPixelsCoords = (png1, png2, predicate, opts, callback?) => {
     if (!callback) {
         callback = opts;
         opts = {};
@@ -74,8 +74,8 @@ exports.getDiffPixelsCoords = (png1, png2, predicate, opts, callback) => {
     processRow(0);
 };
 
-exports.formatImages = (img1, img2) => {
-    validators.validateImages(img1, img2);
+export const formatImages = (img1, img2) => {
+    validateImages(img1, img2);
 
     return [img1, img2].map((i) => {
         return _.isObject(i) && !Buffer.isBuffer(i) ? i : {source: i, boundingBox: null};

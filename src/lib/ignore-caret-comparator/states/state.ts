@@ -1,13 +1,7 @@
-'use strict';
-
-module.exports = class State {
-    constructor(comparator) {
-        this._ctx = comparator;
-    }
-
-    validate() {
-        throw new Error('Not implemented');
-    }
+export default abstract class State {
+    constructor(
+        private _ctx: any
+    ) {}
 
     switchState(state) {
         this._ctx.switchState(state);
@@ -32,4 +26,6 @@ module.exports = class State {
     set caretBottomRight(point) {
         this._ctx.caretBottomRight = point;
     }
-};
+
+    abstract validate(point: any, imgs?: any): boolean;
+}

@@ -1,7 +1,5 @@
-'use strict';
-
-const DiffArea = require('../diff-area');
-const jsgraphs = require('js-graph-algorithms');
+import DiffArea from '../diff-area';
+import jsgraphs from 'js-graph-algorithms';
 
 const hasOverlap = (cluster1, cluster2) => {
     if (cluster1.left > cluster2.right || cluster2.left > cluster1.right) {
@@ -29,10 +27,11 @@ const getConnectedComponents = (clusters) => {
     return new jsgraphs.ConnectedComponents(graph);
 };
 
-exports.join = (clusters) => {
+export const join = (clusters) => {
     const connectedComponents = getConnectedComponents(clusters);
+    const connectedComponentsIds = Array(clusters.length).fill(0).map((_, i) => connectedComponents.componentId(i));
 
-    return connectedComponents.id.reduce((acc, clusterId, i) => {
+    return connectedComponentsIds.reduce((acc, clusterId, i) => {
         const {left, top, right, bottom} = clusters[i].area;
         if (!acc[clusterId]) {
             acc[clusterId] = DiffArea.create();

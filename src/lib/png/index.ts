@@ -1,10 +1,8 @@
-'use strict';
-
-const fs = require('fs-extra');
-const NestedError = require('nested-error-stacks');
-const {PNG} = require('pngjs');
-const OriginalPNG = require('./original-png');
-const BoundedPNG = require('./bounded-png');
+import fs from 'fs-extra';
+import NestedError from 'nested-error-stacks';
+import {PNG} from 'pngjs';
+import OriginalPNG from './original-png';
+import BoundedPNG from './bounded-png';
 
 function parseBuffer(buffer) {
     return new Promise((resolve, reject) => {
@@ -18,13 +16,14 @@ function parseBuffer(buffer) {
         });
     });
 }
-exports.create = (png, {boundingBox} = {}) => {
+
+export const create = (png, {boundingBox = undefined} = {}) => {
     return boundingBox
         ? BoundedPNG.create(png, boundingBox)
         : OriginalPNG.create(png);
 };
 
-exports.fromFile = async (filePath, opts = {}) => {
+export const fromFile = async (filePath, opts = {}) => {
     try {
         const buffer = await fs.readFile(filePath);
         return await exports.fromBuffer(buffer, opts);
@@ -33,9 +32,9 @@ exports.fromFile = async (filePath, opts = {}) => {
     }
 };
 
-exports.fromBuffer = async (buffer, opts = {}) => {
+export const fromBuffer = async (buffer, opts = {}) => {
     const png = await parseBuffer(buffer);
     return exports.create(png, opts);
 };
 
-exports.empty = (width, height) => exports.create(new PNG({width, height}));
+export const empty = (width, height) => exports.create(new PNG({width, height}));

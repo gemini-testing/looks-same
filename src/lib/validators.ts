@@ -1,7 +1,5 @@
-'use strict';
-
-const _ = require('lodash');
-const {REQUIRED_IMAGE_FIELDS, REQUIRED_BOUNDING_BOX_FIELDS} = require('./constants');
+import _ from 'lodash';
+import {REQUIRED_IMAGE_FIELDS, REQUIRED_BOUNDING_BOX_FIELDS} from './constants';
 
 const validateRequiredFields = (value, fields) => {
     [].concat(fields).forEach((field) => {
@@ -21,7 +19,7 @@ const validateBoundingBoxCoords = ({boundingBox}) => {
     }
 };
 
-exports.validateImages = (img1, img2) => {
+export const validateImages = (img1, img2) => {
     [img1, img2].forEach((i) => {
         if (Buffer.isBuffer(i) || !_.isObject(i)) {
             return;

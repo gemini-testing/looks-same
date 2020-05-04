@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = (data) => {
+export = (data) => {
     const c1 = data.color1;
     const c2 = data.color2;
 

@@ -1,20 +1,21 @@
-'use strict';
+import DiffArea from '../diff-area';
+import {CLUSTERS_SIZE} from '../constants';
+import * as clustersJoiner from './clusters-joiner';
 
-const DiffArea = require('../diff-area');
-const {CLUSTERS_SIZE} = require('../constants');
-const clustersJoiner = require('./clusters-joiner');
+export default class DiffClusters {
+    private _clustersSize: any;
+    private _clusters: any[];
 
-module.exports = class DiffClusters {
-    constructor(clustersSize) {
+    constructor(clustersSize?: number) {
         this._clustersSize = clustersSize || CLUSTERS_SIZE;
         this._clusters = [];
     }
 
-    update(x, y) {
+    update(x, y): this {
         if (!this._clusters.length) {
             this._clusters.push(DiffArea.create().update(x, y));
 
-            return;
+            return this;
         }
 
         this._joinToClusters(x, y);

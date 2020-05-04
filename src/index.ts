@@ -1,15 +1,12 @@
-'use strict';
-
-const _ = require('lodash');
-const parseColor = require('parse-color');
-const colorDiff = require('color-diff');
-const png = require('./lib/png');
-const areColorsSame = require('./lib/same-colors');
-const AntialiasingComparator = require('./lib/antialiasing-comparator');
-const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
-const utils = require('./lib/utils');
-const {getDiffPixelsCoords} = utils;
-const {JND} = require('./lib/constants');
+import _ from 'lodash';
+import parseColor from 'parse-color';
+import colorDiff from 'color-diff';
+import * as png from './lib/png';
+import areColorsSame from './lib/same-colors';
+import AntialiasingComparator from './lib/antialiasing-comparator';
+import IgnoreCaretComparator from './lib/ignore-caret-comparator';
+import {readPair, getDiffPixelsCoords, formatImages} from './lib/utils';
+import {JND} from './lib/constants';
 
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
     const antialiasingComparator = new AntialiasingComparator(comparator, png1, png2, opts);
@@ -137,17 +134,16 @@ const getMaxDiffBounds = (first, second) => {
     };
 };
 
-module.exports = exports = function looksSame(image1, image2, opts, callback) {
+function looksSame(image1, image2, opts, callback?) {
     if (!callback) {
         callback = opts;
         opts = {};
     }
 
     opts = prepareOpts(opts);
-    [image1, image2] = utils.formatImages(image1, image2);
+    [image1, image2] = formatImages(image1, image2);
 
-    utils
-        .readPair(image1, image2)
+    readPair(image1, image2)
         .then(({first, second}) => {
             const refImg = {size: {width: first.width, height: first.height}};
             const metaInfo = {refImg};
@@ -171,17 +167,16 @@ module.exports = exports = function looksSame(image1, image2, opts, callback) {
         });
 };
 
-exports.getDiffArea = function(image1, image2, opts, callback) {
+looksSame.getDiffArea = function(image1, image2, opts, callback?) {
     if (!callback) {
         callback = opts;
         opts = {};
     }
 
     opts = prepareOpts(opts);
-    [image1, image2] = utils.formatImages(image1, image2);
+    [image1, image2] = formatImages(image1, image2);
 
-    utils
-        .readPair(image1, image2)
+    readPair(image1, image2)
         .then(({first, second}) => {
             if (first.width !== second.width || first.height !== second.height) {
                 return process.nextTick(() => callback(null, getMaxDiffBounds(first, second)));
@@ -202,13 +197,12 @@ exports.getDiffArea = function(image1, image2, opts, callback) {
         });
 };
 
-exports.createDiff = function saveDiff(opts, callback) {
+looksSame.createDiff = function saveDiff(opts, callback) {
     opts = prepareOpts(opts);
 
-    const [image1, image2] = utils.formatImages(opts.reference, opts.current);
+    const [image1, image2] = formatImages(opts.reference, opts.current);
 
-    utils
-        .readPair(image1, image2)
+    readPair(image1, image2)
         .then(({first, second}) => {
             const diffOptions = {
                 highlightColor: parseColorString(opts.highlightColor),
@@ -228,7 +222,7 @@ exports.createDiff = function saveDiff(opts, callback) {
         });
 };
 
-exports.colors = (color1, color2, opts) => {
+looksSame.colors = (color1, color2, opts?) => {
     opts = opts || {};
 
     if (opts.tolerance === undefined) {
@@ -239,3 +233,5 @@ exports.colors = (color1, color2, opts) => {
 
     return comparator({color1, color2});
 };
+
+export default looksSame;

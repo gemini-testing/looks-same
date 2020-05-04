@@ -1,11 +1,9 @@
-'use strict';
+import _ from 'lodash';
+import State from './state';
+import areColorsSame from '../../same-colors';
 
-const _ = require('lodash');
-const State = require('./state');
-const areColorsSame = require('../../same-colors');
-
-module.exports = class InitState extends State {
-    validate(firstCaretPoint, imgs) {
+export default class InitState extends State {
+    validate(firstCaretPoint, imgs): boolean {
         const lastCaretPoint = this._getLastCaretPoint(firstCaretPoint, imgs);
 
         if (!this._looksLikeCaret(firstCaretPoint, lastCaretPoint)) {
@@ -65,4 +63,4 @@ module.exports = class InitState extends State {
     _caretWidth(firstCaretPoint, lastCaretPoint) {
         return (lastCaretPoint.x - firstCaretPoint.x) + 1;
     }
-};
+}

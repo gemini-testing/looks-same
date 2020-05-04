@@ -1,5 +1,3 @@
-'use strict';
-
 /*
  * Anti-aliased pixel detector
  * @see http://www.eejournal.ktu.lt/index.php/elt/article/view/10058/5000
@@ -7,7 +5,12 @@
 
 const DEFAULT_BRIGHTNESS_TOLERANCE = 0;
 
-module.exports = class AntialiasingComparator {
+export default class AntialiasingComparator {
+    private _baseComparator: any;
+    private _img1: any;
+    private _img2: any;
+    private _brightnessTolerance: any;
+
     constructor(baseComparator, png1, png2, {antialiasingTolerance = 0}) {
         this._baseComparator = baseComparator;
         this._img1 = png1;
@@ -24,7 +27,7 @@ module.exports = class AntialiasingComparator {
             || this._isAntialiased(this._img1, data.x, data.y, data, this._img2);
     }
 
-    _isAntialiased(img1, x1, y1, data, img2) {
+    _isAntialiased(img1, x1, y1, data, img2?) {
         const color1 = img1.getPixel(x1, y1);
         const width = data.width;
         const height = data.height;
@@ -103,7 +106,7 @@ module.exports = class AntialiasingComparator {
     _brightnessDelta(color1, color2) {
         return rgb2y(color1.R, color1.G, color1.B) - rgb2y(color2.R, color2.G, color2.B);
     }
-};
+}
 
 // gamma-corrected luminance of a color (YIQ NTSC transmission color space)
 // see https://www.academia.edu/8200524/DIGITAL_IMAGE_PROCESSING_Digital_Image_Processing_PIKS_Inside_Third_Edition

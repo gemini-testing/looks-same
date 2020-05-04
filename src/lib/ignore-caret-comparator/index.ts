@@ -1,13 +1,19 @@
-'use strict';
-
-const _ = require('lodash');
+import _ from 'lodash';
+import InitState from './states/init';
+import CaretDetectedState from './states/caret-detected';
 
 const STATES = {
-    InitState: require('./states/init'),
-    CaretDetectedState: require('./states/caret-detected')
+    InitState,
+    CaretDetectedState
 };
 
-module.exports = class IgnoreCaretComparator {
+export default class IgnoreCaretComparator {
+    private pixelRatio: number;
+    private caretTopLeft: any;
+    private caretBottomRight: any;
+    private _baseComparator: any;
+    private _state: any;
+
     constructor(baseComparator, pixelRatio) {
         this.pixelRatio = pixelRatio ? Math.floor(pixelRatio) : 1;
         this.caretTopLeft = null;
@@ -37,4 +43,4 @@ module.exports = class IgnoreCaretComparator {
     switchState(stateName) {
         this._state = new STATES[stateName](this);
     }
-};
+}

@@ -1,8 +1,8 @@
-'use strict';
+import PNGImage from './png';
 
-const PNGImage = require('./png');
+export default class BoundedPNGImage extends PNGImage {
+    private _boundingBox: any;
 
-module.exports = class BoundedPNGImage extends PNGImage {
     constructor(png, boundingBox) {
         super(png);
 
@@ -21,15 +21,15 @@ module.exports = class BoundedPNGImage extends PNGImage {
         super.setPixel(actX, actY, color);
     }
 
-    getActualCoord(x, y) {
+    getActualCoord(x: number, y: number): {x: number, y: number} {
         return {x: x + this._boundingBox.left, y: y + this._boundingBox.top};
     }
 
-    get width() {
+    get width(): number {
         return this._boundingBox.right - this._boundingBox.left + 1;
     }
 
-    get height() {
+    get height(): number {
         return this._boundingBox.bottom - this._boundingBox.top + 1;
     }
-};
+}

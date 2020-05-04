@@ -1,6 +1,7 @@
-'use strict';
+export = class DiffArea {
+    private _diffArea: { left: number; top: number; right: number; bottom: number; };
+    private _updated: boolean;
 
-module.exports = class DiffArea {
     static create() {
         return new DiffArea();
     }
@@ -37,4 +38,4 @@ module.exports = class DiffArea {
     get area() {
         return this._diffArea;
     }
-};
+}

@@ -1,16 +1,16 @@
-'use strict';
+import fs from 'fs';
+import concat from 'concat-stream';
 
-const fs = require('fs');
-const concat = require('concat-stream');
+type Constructor<T> = new (...args: Array<any>) => T;
 
-module.exports = class PNGImage {
-    static create(...args) {
+export default abstract class PNGImage {
+    public static create<T extends PNGImage>(this: Constructor<T>, ...args): T {
         return new this(...args);
     }
 
-    constructor(png) {
-        this._png = png;
-    }
+    constructor(
+        protected _png: any
+    ) {}
 
     getPixel(x, y) {
         const idx = this._getIdx(x, y);
@@ -27,18 +27,6 @@ module.exports = class PNGImage {
         this._png.data[idx + 1] = color.G;
         this._png.data[idx + 2] = color.B;
         this._png.data[idx + 3] = 255;
-    }
-
-    getActualCoord() {
-        throw new Error('Not implemented');
-    }
-
-    get width() {
-        throw new Error('Not implemented');
-    }
-
-    get height() {
-        throw new Error('Not implemented');
     }
 
     _getIdx(x, y) {
@@ -61,4 +49,8 @@ module.exports = class PNGImage {
             callback(null, data);
         }
     }
-};
+
+    abstract getActualCoord(x: number, y: number): {x: number, y: number};
+    abstract get width(): number;
+    abstract get height(): number;
+}
