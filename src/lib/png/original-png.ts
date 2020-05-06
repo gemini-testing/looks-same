@@ -1,7 +1,7 @@
 import PNGImage from './png';
 
 export default class OriginalPNGImage extends PNGImage {
-    getActualCoord(x: number, y: number): {x: number, y: number} {
+    getActualCoord(x: number, y: number): {x: number; y: number} {
         return {x, y};
     }
 

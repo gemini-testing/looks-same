@@ -1,7 +1,7 @@
 import fs from 'fs';
 import concat from 'concat-stream';
 
-type Constructor<T> = new (...args: Array<any>) => T;
+type Constructor<T> = new (...args: any[]) => T;
 
 export default abstract class PNGImage {
     public static create<T extends PNGImage>(this: Constructor<T>, ...args): T {
@@ -50,7 +50,7 @@ export default abstract class PNGImage {
         }
     }
 
-    abstract getActualCoord(x: number, y: number): {x: number, y: number};
+    abstract getActualCoord(x: number, y: number): {x: number; y: number};
     abstract get width(): number;
     abstract get height(): number;
 }

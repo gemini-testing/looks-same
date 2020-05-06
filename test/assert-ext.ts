@@ -10,4 +10,4 @@ export default function(chai) {
         assert.calledOnce(arguments[0]);
         assert.calledWithMatch(...arguments);
     };
-};
+}

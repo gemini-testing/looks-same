@@ -165,7 +165,7 @@ function looksSame(image1, image2, opts, callback?) {
         .catch(error => {
             callback(error);
         });
-};
+}
 
 looksSame.getDiffArea = function(image1, image2, opts, callback?) {
     if (!callback) {

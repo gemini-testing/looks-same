@@ -18,7 +18,7 @@ describe('lib/validators', () => {
                 assert.throws(() => {
                     return validateImages(
                         {source: 'image-path'},
-                        {source: 'image-path'},
+                        {source: 'image-path'}
                     );
                 }, TypeError, 'Field "boundingBox" does not exist');
             });

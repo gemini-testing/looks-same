@@ -21,7 +21,7 @@ export default class BoundedPNGImage extends PNGImage {
         super.setPixel(actX, actY, color);
     }
 
-    getActualCoord(x: number, y: number): {x: number, y: number} {
+    getActualCoord(x: number, y: number): {x: number; y: number} {
         return {x: x + this._boundingBox.left, y: y + this._boundingBox.top};
     }
 

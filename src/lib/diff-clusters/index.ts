@@ -38,4 +38,4 @@ export default class DiffClusters {
     get clusters() {
         return clustersJoiner.join(this._clusters).map(c => c.area);
     }
-};
+}

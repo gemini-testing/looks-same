@@ -1,8 +1,9 @@
 import chaiModule from 'chai';
-import sinonModule from "sinon";
+import sinonModule from 'sinon';
 import sinonChai from 'sinon-chai';
 import chaiAsPromised from 'chai-as-promised';
 import assertExt from './assert-ext';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import mocha from 'mocha';
 
 declare global {
