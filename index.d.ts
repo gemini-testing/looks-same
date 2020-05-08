@@ -191,7 +191,7 @@ interface Color {
 declare function looksSame(
     image1: string | Buffer | BoundedImage,
     image2: string | Buffer | BoundedImage,
-    options: LooksSameOptions,
+    options: LooksSameOptions | {},
     callback: LooksSameCallback
 ): void;
 /**
