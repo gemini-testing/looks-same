@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.2.3](https://github.com/gemini-testing/looks-same/compare/v7.2.2...v7.2.3) (2020-05-08)
+
+
+### Bug Fixes
+
+* **prepareOpts:** TypeError when opts is undefined ([#66](https://github.com/gemini-testing/looks-same/issues/66)) ([c6ea6c2](https://github.com/gemini-testing/looks-same/commit/c6ea6c2de99a82e1cf798264e87c3d057f1ae32f))
+
 ### [7.2.2](https://github.com/gemini-testing/looks-same/compare/v7.2.1...v7.2.2) (2019-10-28)
 
 
