@@ -1,61 +1,77 @@
 {
-  "name": "looks-same",
-  "version": "7.2.3",
-  "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "color-diff": "^1.1.0",
-    "concat-stream": "^1.6.2",
-    "fs-extra": "^8.1.0",
-    "js-graph-algorithms": "1.0.18",
-    "lodash": "^4.17.3",
-    "nested-error-stacks": "^2.1.0",
-    "parse-color": "^1.0.0",
-    "pngjs": "^3.3.3"
-  },
-  "devDependencies": {
-    "@types/node": "^10.12.3",
-    "chai": "^4.1.2",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^5.3.0",
-    "eslint-config-gemini-testing": "^2.8.0",
-    "gm": "^1.23.1",
-    "matcha": "^0.7.0",
-    "mocha": "^5.2.0",
-    "proxyquire": "^1.7.10",
-    "sinon": "^6.1.5",
-    "sinon-chai": "^3.3.0",
-    "standard-version": "^7.0.0",
-    "temp": "^0.8.3"
-  },
-  "scripts": {
-    "test-unit": "mocha",
-    "lint": "eslint .",
-    "test": "npm run test-unit && npm run lint",
-    "bench": "matcha benchmark/*",
-    "release": "standard-version"
-  },
-  "engines": {
-    "node": ">= 8.0.0"
-  },
-  "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gemini-testing/looks-same.git"
-  },
-  "keywords": [
-    "png",
-    "compare",
-    "ciede2000",
-    "diff"
-  ],
-  "bugs": {
-    "url": "https://github.com/gemini-testing/looks-same/issues"
-  },
-  "homepage": "https://github.com/gemini-testing/looks-same"
+    "name": "looks-same",
+    "version": "7.2.2",
+    "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
+    "main": "build/src/index.js",
+    "files": [
+        "build/src"
+    ],
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {
+        "color-diff": "^1.1.0",
+        "concat-stream": "^1.6.2",
+        "fs-extra": "^8.1.0",
+        "js-graph-algorithms": "1.0.18",
+        "lodash": "^4.17.3",
+        "nested-error-stacks": "^2.1.0",
+        "parse-color": "^1.0.0",
+        "pngjs": "^3.3.3"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.2.11",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^8.5.10",
+        "@types/proxyquire": "^1.3.28",
+        "@types/sinon": "^9.0.0",
+        "@types/sinon-chai": "^3.2.4",
+        "@typescript-eslint/eslint-plugin": "^1.13.0",
+        "@typescript-eslint/parser": "^1.13.0",
+        "chai": "^4.1.2",
+        "chai-as-promised": "^7.1.1",
+        "copy": "^0.3.2",
+        "eslint": "^6.8.0",
+        "eslint-config-gemini-testing": "^2.8.0",
+        "mocha": "^5.2.0",
+        "prettier": "^1.17.1",
+        "proxyquire": "^1.7.10",
+        "rimraf": "^3.0.2",
+        "sinon": "^6.1.5",
+        "sinon-chai": "^3.3.0",
+        "standard-version": "^7.0.0",
+        "temp": "^0.8.3",
+        "typescript": "^3.5.1"
+    },
+    "scripts": {
+        "build": "tsc && copy ./test/data/**/*.png ./src/index.d.ts ./build",
+        "clean": "rimraf build/ *.tsbuildinfo",
+        "prepare": "npm run clean && npm run build",
+        "test": "npm run build && npm run test-unit && npm run lint",
+        "test-unit": "mocha build/test --recursive --require ./build/test/setup",
+        "lint": "npm run eslint && npm run style",
+        "reformat": "eslint src test --ext .ts --fix && prettier --write '**/*.ts' '**/*.json'",
+        "style": "prettier --check '**/*.ts' '**/*.json'",
+        "eslint": "eslint src test --ext .ts",
+        "release": "standard-version"
+    },
+    "engines": {
+        "node": ">= 8.0.0"
+    },
+    "author": "Sergey Tatarintsev <sevinf@yandex-team.ru> (https://github.com/SevInf)",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gemini-testing/looks-same.git"
+    },
+    "keywords": [
+        "png",
+        "compare",
+        "ciede2000",
+        "diff"
+    ],
+    "bugs": {
+        "url": "https://github.com/gemini-testing/looks-same/issues"
+    },
+    "homepage": "https://github.com/gemini-testing/looks-same"
 }

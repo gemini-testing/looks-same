@@ -1,0 +1,21 @@
+{
+    "include": ["src", "test"],
+    "compilerOptions": {
+        "outDir": "build",
+        "target": "es2017",
+        "module": "commonjs",
+        "declaration": true,
+        "declarationMap": false,
+        "sourceMap": true,
+        "strict": true,
+        "noImplicitAny": false,
+        "strictNullChecks": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "types": ["node"],
+        "esModuleInterop": true,
+        "noEmitOnError": true
+    }
+}
