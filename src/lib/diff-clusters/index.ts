@@ -1,6 +1,6 @@
-import DiffArea from '../diff-area';
-import {CLUSTERS_SIZE} from '../constants';
-import * as clustersJoiner from './clusters-joiner';
+import DiffArea from "../diff-area";
+import { CLUSTERS_SIZE } from "../constants";
+import * as clustersJoiner from "./clusters-joiner";
 
 export default class DiffClusters {
     private _clustersSize: any;
@@ -24,7 +24,7 @@ export default class DiffClusters {
     }
 
     _joinToClusters(x, y) {
-        const pointCluster = this._clusters.find((c) => c.isPointInArea(x, y, this._clustersSize));
+        const pointCluster = this._clusters.find(c => c.isPointInArea(x, y, this._clustersSize));
 
         if (!pointCluster) {
             this._clusters.push(DiffArea.create().update(x, y));

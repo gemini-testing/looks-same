@@ -1,5 +1,5 @@
-import fs from 'fs';
-import concat from 'concat-stream';
+import fs from "fs";
+import concat from "concat-stream";
 
 type Constructor<T> = new (...args: any[]) => T;
 
@@ -8,16 +8,14 @@ export default abstract class PNGImage {
         return new this(...args);
     }
 
-    constructor(
-        protected _png: any
-    ) {}
+    constructor(protected _png: any) {}
 
     getPixel(x, y) {
         const idx = this._getIdx(x, y);
         return {
             R: this._png.data[idx],
             G: this._png.data[idx + 1],
-            B: this._png.data[idx + 2]
+            B: this._png.data[idx + 2],
         };
     }
 
@@ -37,20 +35,20 @@ export default abstract class PNGImage {
         const writeStream = fs.createWriteStream(path);
         this._png.pack().pipe(writeStream);
 
-        writeStream.on('error', (error) => callback(error));
-        writeStream.on('finish', () => callback(null));
+        writeStream.on("error", error => callback(error));
+        writeStream.on("finish", () => callback(null));
     }
 
     createBuffer(callback) {
         this._png.pack().pipe(concat(gotDiff));
-        this._png.on('error', (error) => callback(error, null));
+        this._png.on("error", error => callback(error, null));
 
         function gotDiff(data) {
             callback(null, data);
         }
     }
 
-    abstract getActualCoord(x: number, y: number): {x: number; y: number};
+    abstract getActualCoord(x: number, y: number): { x: number; y: number };
     abstract get width(): number;
     abstract get height(): number;
 }

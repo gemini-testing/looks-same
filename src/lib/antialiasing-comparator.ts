@@ -11,7 +11,7 @@ export default class AntialiasingComparator {
     private _img2: any;
     private _brightnessTolerance: any;
 
-    constructor(baseComparator, png1, png2, {antialiasingTolerance = 0}) {
+    constructor(baseComparator, png1, png2, { antialiasingTolerance = 0 }) {
         this._baseComparator = baseComparator;
         this._img1 = png1;
         this._img2 = png2;
@@ -23,8 +23,10 @@ export default class AntialiasingComparator {
     }
 
     _checkIsAntialiased(data) {
-        return this._isAntialiased(this._img2, data.x, data.y, data, this._img1)
-            || this._isAntialiased(this._img1, data.x, data.y, data, this._img2);
+        return (
+            this._isAntialiased(this._img2, data.x, data.y, data, this._img1) ||
+            this._isAntialiased(this._img1, data.x, data.y, data, this._img2)
+        );
     }
 
     _isAntialiased(img1, x1, y1, data, img2?) {
@@ -99,8 +101,10 @@ export default class AntialiasingComparator {
 
         // if either the darkest or the brightest pixel has more than 2 equal siblings in both images
         // (definitely not anti-aliased), this pixel is anti-aliased
-        return (!this._isAntialiased(img1, minX, minY, data) && !this._isAntialiased(img2, minX, minY, data)) ||
-            (!this._isAntialiased(img1, maxX, maxY, data) && !this._isAntialiased(img2, maxX, maxY, data));
+        return (
+            (!this._isAntialiased(img1, minX, minY, data) && !this._isAntialiased(img2, minX, minY, data)) ||
+            (!this._isAntialiased(img1, maxX, maxY, data) && !this._isAntialiased(img2, maxX, maxY, data))
+        );
     }
 
     _brightnessDelta(color1, color2) {

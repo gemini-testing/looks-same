@@ -1,13 +1,13 @@
-import fs from 'fs-extra';
-import NestedError from 'nested-error-stacks';
-import {PNG} from 'pngjs';
-import OriginalPNG from './original-png';
-import BoundedPNG from './bounded-png';
+import fs from "fs-extra";
+import NestedError from "nested-error-stacks";
+import { PNG } from "pngjs";
+import OriginalPNG from "./original-png";
+import BoundedPNG from "./bounded-png";
 
 function parseBuffer(buffer) {
     return new Promise((resolve, reject) => {
         const png = new PNG();
-        png.parse(buffer, (err) => {
+        png.parse(buffer, err => {
             if (err) {
                 reject(err);
             } else {
@@ -17,10 +17,8 @@ function parseBuffer(buffer) {
     });
 }
 
-export const create = (png, {boundingBox = undefined} = {}) => {
-    return boundingBox
-        ? BoundedPNG.create(png, boundingBox)
-        : OriginalPNG.create(png);
+export const create = (png, { boundingBox = undefined } = {}) => {
+    return boundingBox ? BoundedPNG.create(png, boundingBox) : OriginalPNG.create(png);
 };
 
 export const fromFile = async (filePath, opts = {}) => {
@@ -37,4 +35,4 @@ export const fromBuffer = async (buffer, opts = {}) => {
     return exports.create(png, opts);
 };
 
-export const empty = (width, height) => exports.create(new PNG({width, height}));
+export const empty = (width, height) => exports.create(new PNG({ width, height }));

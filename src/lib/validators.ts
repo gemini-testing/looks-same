@@ -1,15 +1,15 @@
-import _ from 'lodash';
-import {REQUIRED_IMAGE_FIELDS, REQUIRED_BOUNDING_BOX_FIELDS} from './constants';
+import _ from "lodash";
+import { REQUIRED_IMAGE_FIELDS, REQUIRED_BOUNDING_BOX_FIELDS } from "./constants";
 
 const validateRequiredFields = (value, fields) => {
-    [].concat(fields).forEach((field) => {
+    [].concat(fields).forEach(field => {
         if (!_.hasIn(value, field)) {
             throw new TypeError(`Field "${field}" does not exist in ${JSON.stringify(value)}`);
         }
     });
 };
 
-const validateBoundingBoxCoords = ({boundingBox}) => {
+const validateBoundingBoxCoords = ({ boundingBox }) => {
     if (boundingBox.left > boundingBox.right) {
         throw new TypeError('"left" coordinate in "boundingBox" field cannot be greater than "right"');
     }
@@ -20,7 +20,7 @@ const validateBoundingBoxCoords = ({boundingBox}) => {
 };
 
 export const validateImages = (img1, img2) => {
-    [img1, img2].forEach((i) => {
+    [img1, img2].forEach(i => {
         if (Buffer.isBuffer(i) || !_.isObject(i)) {
             return;
         }

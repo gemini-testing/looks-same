@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import InitState from './states/init';
-import CaretDetectedState from './states/caret-detected';
+import _ from "lodash";
+import InitState from "./states/init";
+import CaretDetectedState from "./states/caret-detected";
 
 const STATES = {
     InitState,
-    CaretDetectedState
+    CaretDetectedState,
 };
 
 export default class IgnoreCaretComparator {
@@ -20,7 +20,7 @@ export default class IgnoreCaretComparator {
         this.caretBottomRight = null;
         this._baseComparator = baseComparator;
 
-        this.switchState('InitState');
+        this.switchState("InitState");
     }
 
     /**
@@ -37,7 +37,7 @@ export default class IgnoreCaretComparator {
     }
 
     _checkIsCaret(data) {
-        return this._state.validate(_.pick(data, ['x', 'y']), _.pick(data, ['png1', 'png2']));
+        return this._state.validate(_.pick(data, ["x", "y"]), _.pick(data, ["png1", "png2"]));
     }
 
     switchState(stateName) {

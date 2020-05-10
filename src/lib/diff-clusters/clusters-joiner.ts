@@ -1,5 +1,5 @@
-import DiffArea from '../diff-area';
-import jsgraphs from 'js-graph-algorithms';
+import DiffArea from "../diff-area";
+import jsgraphs from "js-graph-algorithms";
 
 const hasOverlap = (cluster1, cluster2) => {
     if (cluster1.left > cluster2.right || cluster2.left > cluster1.right) {
@@ -13,7 +13,7 @@ const hasOverlap = (cluster1, cluster2) => {
     return true;
 };
 
-const getConnectedComponents = (clusters) => {
+const getConnectedComponents = clusters => {
     const graph = new jsgraphs.Graph(clusters.length);
 
     clusters.forEach((c1, i) => {
@@ -27,19 +27,19 @@ const getConnectedComponents = (clusters) => {
     return new jsgraphs.ConnectedComponents(graph);
 };
 
-export const join = (clusters) => {
+export const join = clusters => {
     const connectedComponents = getConnectedComponents(clusters);
-    const connectedComponentsIds = Array(clusters.length).fill(0).map((_, i) => connectedComponents.componentId(i));
+    const connectedComponentsIds = Array(clusters.length)
+        .fill(0)
+        .map((_, i) => connectedComponents.componentId(i));
 
     return connectedComponentsIds.reduce((acc, clusterId, i) => {
-        const {left, top, right, bottom} = clusters[i].area;
+        const { left, top, right, bottom } = clusters[i].area;
         if (!acc[clusterId]) {
             acc[clusterId] = DiffArea.create();
         }
 
-        acc[clusterId]
-            .update(left, top)
-            .update(right, bottom);
+        acc[clusterId].update(left, top).update(right, bottom);
 
         return acc;
     }, []);

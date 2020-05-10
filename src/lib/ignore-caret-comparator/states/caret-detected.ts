@@ -1,4 +1,4 @@
-import State from './state';
+import State from "./state";
 
 export default class CaretDetectedState extends State {
     validate(point) {
@@ -6,7 +6,11 @@ export default class CaretDetectedState extends State {
     }
 
     _isInsideCaret(point) {
-        return point.x >= this.caretTopLeft.x && point.x <= this.caretBottomRight.x
-            && point.y >= this.caretTopLeft.y && point.y <= this.caretBottomRight.y;
+        return (
+            point.x >= this.caretTopLeft.x &&
+            point.x <= this.caretBottomRight.x &&
+            point.y >= this.caretTopLeft.y &&
+            point.y <= this.caretBottomRight.y
+        );
     }
 }

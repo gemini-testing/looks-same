@@ -7,18 +7,18 @@ export default class DiffArea {
     }
 
     constructor() {
-        this._diffArea = {left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity};
+        this._diffArea = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity };
         this._updated = false;
     }
 
     update(x, y) {
-        const {left, top, right, bottom} = this._diffArea;
+        const { left, top, right, bottom } = this._diffArea;
 
         this._diffArea = {
             left: Math.min(left, x),
             top: Math.min(top, y),
             right: Math.max(right, x),
-            bottom: Math.max(bottom, y)
+            bottom: Math.max(bottom, y),
         };
         this._updated = true;
 
@@ -26,9 +26,9 @@ export default class DiffArea {
     }
 
     isPointInArea(x, y, radius) {
-        const {left, top, right, bottom} = this._diffArea;
+        const { left, top, right, bottom } = this._diffArea;
 
-        return x >= (left - radius) && x <= (right + radius) && y >= (top - radius) && y <= (bottom + radius);
+        return x >= left - radius && x <= right + radius && y >= top - radius && y <= bottom + radius;
     }
 
     isEmpty() {
