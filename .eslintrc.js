@@ -24,6 +24,9 @@ module.exports = {
             },
         ],
         "@typescript-eslint/no-parameter-properties": "off",
-        "no-prototype-builtins": "off"
+        "no-prototype-builtins": "off",
+        "object-curly-spacing": ["error", "always"],
+        quotes: ["error", "double", {avoidEscape: true}],
+        "comma-dangle": ["error", "always-multiline"],
     }
 };
