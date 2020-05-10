@@ -1,7 +1,9 @@
 export default abstract class State {
-    constructor(
-        private _ctx: any
-    ) {}
+    private _ctx: any;
+
+    constructor(comporator) {
+        this._ctx = comporator;
+    }
 
     switchState(state) {
         this._ctx.switchState(state);

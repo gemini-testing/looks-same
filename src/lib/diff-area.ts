@@ -1,4 +1,4 @@
-export = class DiffArea {
+export default class DiffArea {
     private _diffArea: { left: number; top: number; right: number; bottom: number };
     private _updated: boolean;
 

@@ -3,7 +3,6 @@
   "version": "7.2.3",
   "description": "Pure node.js library for comparing PNG-images, taking into account human color perception.",
   "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
   "files": [
     "build/src"
   ],
@@ -23,7 +22,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^13.13.0",
+    "@types/node": "^8.5.10",
     "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^9.0.0",
     "@types/sinon-chai": "^3.2.4",
@@ -31,24 +30,29 @@
     "@typescript-eslint/parser": "^1.13.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "copy": "^0.3.2",
     "eslint": "^6.8.0",
     "eslint-config-gemini-testing": "^2.8.0",
     "mocha": "^5.2.0",
+    "prettier": "^1.17.1",
     "proxyquire": "^1.7.10",
     "rimraf": "^3.0.2",
     "sinon": "^6.1.5",
     "sinon-chai": "^3.3.0",
     "standard-version": "^7.0.0",
     "temp": "^0.8.3",
-    "typescript": "^3.8.3"
+    "typescript": "^3.5.1"
   },
   "scripts": {
-    "build": "tsc && ./bin/copy-additional-files-to-build.sh",
+    "build": "tsc && copy ./test/data/**/*.png ./src/index.d.ts ./build",
     "clean": "rimraf build/ *.tsbuildinfo",
     "prepare": "npm run clean && npm run build",
     "test": "npm run build && npm run test-unit && npm run lint",
     "test-unit": "mocha build/test --recursive --require ./build/test/setup",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "npm run eslint && npm run style",
+    "reformat": "eslint src test --ext .ts --fix && prettier --write '**/*.ts' '**/*.json'",
+    "style": "prettier --check '**/*.ts' '**/*.json'",
+    "eslint": "eslint src test --ext .ts",
     "release": "standard-version"
   },
   "engines": {
