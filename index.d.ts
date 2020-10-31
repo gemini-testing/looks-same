@@ -7,7 +7,7 @@
 /**
  * coordinate bounds
  */
-interface CoordBounds {
+export interface CoordBounds {
     /**
      * X-coordinate of upper left corner
      */
@@ -29,7 +29,7 @@ interface CoordBounds {
 /**
  * bounded image
  */
-interface BoundedImage {
+export interface BoundedImage {
     /**
      * image path or buffer
      */
@@ -43,7 +43,7 @@ interface BoundedImage {
 /**
  * The result obtained from the function.
 */
-interface LooksSameResult {
+export interface LooksSameResult {
     /**
      * true if images are equal, false - otherwise
      */
@@ -58,12 +58,12 @@ interface LooksSameResult {
     diffClusters?: CoordBounds[];
 }
 
-type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
+export type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
 
 /**
  * The options passed to looksSame function
  */
-interface LooksSameOptions {
+export interface LooksSameOptions {
     /**
      * By default, it will detect only noticeable differences. If you wish to detect any difference, use strict options.
      */
@@ -117,7 +117,7 @@ interface LooksSameOptions {
 /**
  * The options passed to looksSame.createDiff function without diff
  */
-interface CreateDiffAsBufferOptions {
+export interface CreateDiffAsBufferOptions {
     /**
      * The baseline image
      */
@@ -156,7 +156,7 @@ interface CreateDiffAsBufferOptions {
 /**
  * The options passed to looksSame.createDiff function
  */
-interface CreateDiffOptions extends CreateDiffAsBufferOptions {
+export interface CreateDiffOptions extends CreateDiffAsBufferOptions {
     /**
      * The diff image path to store
      */
@@ -166,7 +166,7 @@ interface CreateDiffOptions extends CreateDiffAsBufferOptions {
 /**
  * Pass to looksSame.colors function
  */
-interface Color {
+export interface Color {
     /**
      * Red
      */
