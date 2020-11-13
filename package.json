@@ -15,7 +15,7 @@
     "lodash": "^4.17.3",
     "nested-error-stacks": "^2.1.0",
     "parse-color": "^1.0.0",
-    "pngjs": "^3.3.3"
+    "pngjs": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^10.12.3",
