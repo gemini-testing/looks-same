@@ -1,6 +1,6 @@
 'use strict';
 
-const {formatImages} = require('../lib/utils');
+const {formatImages, areBuffersEqual} = require('../lib/utils');
 const validators = require('../lib/validators');
 
 describe('lib/utils', () => {
@@ -41,6 +41,35 @@ describe('lib/utils', () => {
 
             assert.deepEqual(formattedImg1, {source: img1, boundingBox: null});
             assert.deepEqual(formattedImg2, {source: img2, boundingBox: null});
+        });
+    });
+
+    describe('areBuffersEqual', () => {
+        it('should return "false" if passed buffers contains "boundingBox" field', () => {
+            const [img1, img2] = [
+                {buffer: Buffer.from('buf1')},
+                {buffer: Buffer.from('buf2'), boundingBox: {top: 1, left: 2, right: 3, bottom: 4}}
+            ];
+
+            const res = areBuffersEqual(img1, img2);
+
+            assert.isFalse(res);
+        });
+
+        it('should return "false" if passed buffers are not equal', () => {
+            const [img1, img2] = [{buffer: Buffer.from('buf1')}, {buffer: Buffer.from('buf2')}];
+
+            const res = areBuffersEqual(img1, img2);
+
+            assert.isFalse(res);
+        });
+
+        it('should return "true" if passed buffers are equal', () => {
+            const [img1, img2] = [{buffer: Buffer.from('buf')}, {buffer: Buffer.from('buf')}];
+
+            const res = areBuffersEqual(img1, img2);
+
+            assert.isTrue(res);
         });
     });
 });
