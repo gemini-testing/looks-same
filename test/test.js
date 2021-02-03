@@ -27,19 +27,15 @@ const forFilesAndBuffers = (callback) => {
 };
 
 describe('looksSame', () => {
-    const sandbox = sinon.createSandbox();
-
     afterEach(() => {
-        sandbox.restore();
+        sinon.restore();
     });
 
-    it('should throw if both tolerance and strict options set', () => {
-        expect(() => {
-            looksSame(srcPath('ref.png'), srcPath('same.png'), {
-                strict: true,
-                tolerance: 9000
-            }, () => {});
-        }).to.throw(TypeError);
+    it('should throw if both tolerance and strict options set', async () => {
+        await assert.isRejected(looksSame(srcPath('ref.png'), srcPath('same.png'), {
+            strict: true,
+            tolerance: 9000
+        }, () => { }), TypeError);
     });
 
     it('should work when opts is undefined', () => {
@@ -49,7 +45,7 @@ describe('looksSame', () => {
     });
 
     it('should format images', (done) => {
-        sandbox.spy(utils, 'formatImages');
+        sinon.spy(utils, 'formatImages');
 
         looksSame(srcPath('ref.png'), srcPath('same.png'), () => {
             assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
@@ -59,8 +55,8 @@ describe('looksSame', () => {
 
     it('should read formatted images', (done) => {
         const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
-        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
-        sandbox.spy(utils, 'readPair');
+        sinon.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sinon.spy(utils, 'readPair');
 
         looksSame(srcPath('ref.png'), srcPath('same.png'), () => {
             assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);
@@ -69,18 +65,24 @@ describe('looksSame', () => {
     });
 
     forFilesAndBuffers((getImage) => {
-        it('should return true for similar images', (done) => {
+        it('should return true for similar images (compare only by buffers)', (done) => {
+            sinon.stub(utils, 'getDiffPixelsCoords');
+
             looksSame(getImage('ref.png'), getImage('same.png'), (error, {equal}) => {
-                expect(error).to.equal(null);
-                expect(equal).to.equal(true);
+                assert.isNull(error);
+                assert.isTrue(equal);
+                assert.notCalled(utils.getDiffPixelsCoords);
                 done();
             });
         });
 
-        it('should return false for different images', (done) => {
+        it('should return false for different images (compare by png pixels)', (done) => {
+            sinon.spy(utils, 'getDiffPixelsCoords');
+
             looksSame(getImage('ref.png'), getImage('different.png'), (error, {equal}) => {
-                expect(error).to.equal(null);
-                expect(equal).to.equal(false);
+                assert.isNull(error);
+                assert.isFalse(equal);
+                assert.calledOnce(utils.getDiffPixelsCoords);
                 done();
             });
         });
@@ -377,8 +379,6 @@ describe('looksSame', () => {
 });
 
 describe('createDiff', () => {
-    const sandbox = sinon.createSandbox();
-
     beforeEach(() => {
         this.tempName = temp.path({suffix: '.png'});
     });
@@ -388,7 +388,7 @@ describe('createDiff', () => {
             fs.unlinkSync(this.tempName);
         }
 
-        sandbox.restore();
+        sinon.restore();
     });
 
     it('should throw if both tolerance and strict options set', () => {
@@ -405,7 +405,7 @@ describe('createDiff', () => {
     });
 
     it('should format images', (done) => {
-        sandbox.spy(utils, 'formatImages');
+        sinon.spy(utils, 'formatImages');
 
         looksSame.createDiff({
             reference: srcPath('ref.png'),
@@ -420,8 +420,8 @@ describe('createDiff', () => {
 
     it('should read formatted images', (done) => {
         const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
-        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
-        sandbox.spy(utils, 'readPair');
+        sinon.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sinon.spy(utils, 'readPair');
 
         looksSame.createDiff({
             reference: srcPath('ref.png'),
@@ -817,12 +817,10 @@ describe('colors', () => {
 });
 
 describe('getDiffArea', () => {
-    const sandbox = sinon.createSandbox();
-
-    afterEach(() => sandbox.restore());
+    afterEach(() => sinon.restore());
 
     it('should format images', (done) => {
-        sandbox.spy(utils, 'formatImages');
+        sinon.spy(utils, 'formatImages');
 
         looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), () => {
             assert.calledOnceWith(utils.formatImages, srcPath('ref.png'), srcPath('same.png'));
@@ -832,8 +830,8 @@ describe('getDiffArea', () => {
 
     it('should read formatted images', (done) => {
         const [formattedImg1, formattedImg2] = [{source: srcPath('ref.png')}, {source: srcPath('same.png')}];
-        sandbox.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
-        sandbox.spy(utils, 'readPair');
+        sinon.stub(utils, 'formatImages').returns([formattedImg1, formattedImg2]);
+        sinon.spy(utils, 'readPair');
 
         looksSame.getDiffArea(srcPath('ref.png'), srcPath('same.png'), () => {
             assert.calledOnceWith(utils.readPair, formattedImg1, formattedImg2);

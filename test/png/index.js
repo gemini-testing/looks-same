@@ -3,11 +3,11 @@
 const sinon = require('sinon');
 const fs = require('fs-extra');
 const {PNG} = require('pngjs');
-const {fromFile} = require('../../lib/png/index');
+const {fromFile} = require('../../lib/png-image');
 
 const stubBuffer = Buffer.from([123]);
 
-describe('lib/png/index.js', () => {
+describe('lib/png-image/index.js', () => {
     const sandbox = sinon.sandbox.create();
     let parseError;
 

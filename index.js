@@ -3,12 +3,12 @@
 const _ = require('lodash');
 const parseColor = require('parse-color');
 const colorDiff = require('color-diff');
-const png = require('./lib/png');
+const png = require('./lib/png-image');
 const areColorsSame = require('./lib/same-colors');
 const AntialiasingComparator = require('./lib/antialiasing-comparator');
 const IgnoreCaretComparator = require('./lib/ignore-caret-comparator');
+const DiffArea = require('./lib/diff-area');
 const utils = require('./lib/utils');
-const {getDiffPixelsCoords} = utils;
 const {JND} = require('./lib/constants');
 
 const makeAntialiasingComparator = (comparator, png1, png2, opts) => {
@@ -137,7 +137,7 @@ const getMaxDiffBounds = (first, second) => {
     };
 };
 
-module.exports = exports = function looksSame(image1, image2, opts, callback) {
+module.exports = exports = async function looksSame(image1, image2, opts, callback) {
     if (!callback) {
         callback = opts;
         opts = {};
@@ -146,29 +146,45 @@ module.exports = exports = function looksSame(image1, image2, opts, callback) {
     opts = prepareOpts(opts);
     [image1, image2] = utils.formatImages(image1, image2);
 
-    utils
-        .readPair(image1, image2)
-        .then(({first, second}) => {
-            const refImg = {size: {width: first.width, height: first.height}};
-            const metaInfo = {refImg};
+    try {
+        const {first, second} = await utils.readPair(image1, image2, utils.readBufferCb);
+        const areBuffersEqual = utils.areBuffersEqual(first, second);
 
-            if (first.width !== second.width || first.height !== second.height) {
-                const diffBounds = getMaxDiffBounds(first, second);
-                return process.nextTick(() => callback(null, {equal: false, metaInfo, diffBounds, diffClusters: [diffBounds]}));
-            }
+        const refImg = {size: {width: first.width, height: first.height}};
+        const metaInfo = {refImg};
 
-            const comparator = createComparator(first, second, opts);
-            const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
+        if (areBuffersEqual) {
+            const diffBounds = (new DiffArea()).area;
+            process.nextTick(() => callback(null, {equal: true, metaInfo, diffBounds, diffClusters: [diffBounds]}));
 
-            getDiffPixelsCoords(first, second, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
-                const diffBounds = diffArea.area;
+            return;
+        }
 
-                callback(null, {equal: diffArea.isEmpty(), metaInfo, diffBounds, diffClusters});
-            });
-        })
-        .catch(error => {
-            callback(error);
+        if (first.width !== second.width || first.height !== second.height) {
+            const diffBounds = getMaxDiffBounds(first, second);
+            process.nextTick(() => callback(null, {equal: false, metaInfo, diffBounds, diffClusters: [diffBounds]}));
+
+            return;
+        }
+
+        const {first: png1, second: png2} = await utils.readPair(
+            {...image1, source: first.buffer},
+            {...image2, source: second.buffer},
+            utils.readPngCb
+        );
+
+        const comparator = createComparator(png1, png2, opts);
+        const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
+
+        utils.getDiffPixelsCoords(png1, png2, comparator, {stopOnFirstFail, shouldCluster, clustersSize}, ({diffArea, diffClusters}) => {
+            const diffBounds = diffArea.area;
+            const equal = diffArea.isEmpty();
+
+            callback(null, {equal, metaInfo, diffBounds, diffClusters});
         });
+    } catch (err) {
+        return callback(err);
+    }
 };
 
 exports.getDiffArea = function(image1, image2, opts, callback) {
@@ -189,7 +205,7 @@ exports.getDiffArea = function(image1, image2, opts, callback) {
 
             const comparator = createComparator(first, second, opts);
 
-            getDiffPixelsCoords(first, second, comparator, opts, ({diffArea}) => {
+            utils.getDiffPixelsCoords(first, second, comparator, opts, ({diffArea}) => {
                 if (diffArea.isEmpty()) {
                     return callback(null, null);
                 }
