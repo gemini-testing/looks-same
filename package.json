@@ -10,7 +10,7 @@
   "dependencies": {
     "color-diff": "^1.1.0",
     "concat-stream": "^1.6.2",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "js-graph-algorithms": "1.0.18",
     "lodash": "^4.17.3",
     "nested-error-stacks": "^2.1.0",
