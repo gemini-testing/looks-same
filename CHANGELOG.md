@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/gemini-testing/looks-same/compare/v7.3.0...v8.0.0) (2022-09-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support of node versions less than 12
+* dropped old node-style callback interface support
+
+### Features
+
+* async-await interface ([b33a6f9](https://github.com/gemini-testing/looks-same/commit/b33a6f925701a3ed6cfe9479cf3d8ad290320be5))
+* increase supported node version up to 12 ([ae1e4b2](https://github.com/gemini-testing/looks-same/commit/ae1e4b265ee3f7af25e526256fdd4970b568ff7a))
+
 ## [7.3.0](https://github.com/gemini-testing/looks-same/compare/v7.2.4...v7.3.0) (2021-02-03)
 
 
