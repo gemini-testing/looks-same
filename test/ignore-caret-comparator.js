@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 
 describe('IgnoreCaretComparator', () => {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
 
     let IgnoreCaretComparator;
     let areColorsSame;

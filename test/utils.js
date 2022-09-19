@@ -1,7 +1,10 @@
 'use strict';
 
-const {formatImages, areBuffersEqual} = require('../lib/utils');
+const {formatImages, areBuffersEqual, readPair, getDiffPixelsCoords} = require('../lib/utils');
+const areColorsSame = require('../lib/same-colors');
 const validators = require('../lib/validators');
+
+const path = require('path');
 
 describe('lib/utils', () => {
     const sandbox = sinon.createSandbox();
@@ -70,6 +73,28 @@ describe('lib/utils', () => {
             const res = areBuffersEqual(img1, img2);
 
             assert.isTrue(res);
+        });
+    });
+
+    describe('getDiffPixelsCoords', () => {
+        const srcPath = (name) => path.join(__dirname, 'data', 'src', name);
+
+        it('should return all diff area by default', async () => {
+            const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
+            const {first, second} = await readPair(img1, img2);
+
+            const {diffArea} = await getDiffPixelsCoords(first, second, areColorsSame);
+
+            assert.deepEqual(diffArea.area, {left: 0, top: 0, right: 49, bottom: 39});
+        });
+
+        it('should return first non-matching pixel if asked for', async () => {
+            const [img1, img2] = formatImages(srcPath('ref.png'), srcPath('different.png'));
+            const {first, second} = await readPair(img1, img2);
+
+            const {diffArea} = await getDiffPixelsCoords(first, second, areColorsSame, {stopOnFirstFail: true});
+
+            assert.deepEqual(diffArea.area, {left: 49, top: 0, right: 49, bottom: 0});
         });
     });
 });

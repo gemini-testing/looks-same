@@ -8,7 +8,7 @@ const {fromFile} = require('../../lib/png-image');
 const stubBuffer = Buffer.from([123]);
 
 describe('lib/png-image/index.js', () => {
-    const sandbox = sinon.sandbox.create();
+    const sandbox = sinon.createSandbox();
     let parseError;
 
     beforeEach(() => {
