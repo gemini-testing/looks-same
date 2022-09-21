@@ -100,7 +100,7 @@ declare module looksSame {
          */
         antialiasingTolerance?: number;
         /**
-         * Responsible for diff area which will be returned  when comparing images.
+         * Responsible for diff area which will be returned when comparing images.
          * Diff bounds will contain the whole diff if stopOnFirstFail is false and only first diff pixel - otherwise.
          */
         stopOnFirstFail?: boolean;
@@ -171,7 +171,7 @@ declare module looksSame {
          */
         highlightColor: string;
         /**
-         * strict comparsion
+         * Strict comparsion
          */
         strict?: boolean;
         /**
@@ -179,7 +179,7 @@ declare module looksSame {
          */
         tolerance?: number;
         /**
-         * makes the search algorithm of the antialiasing less strict
+         * Makes the search algorithm of the antialiasing less strict
          */
         antialiasingTolerance?: number;
         /**
