@@ -239,7 +239,8 @@ declare module looksSame {
      * @param color2 The second color
      * @param options The options passed to looksSame.colors function
      */
-    export function colors(color1: Color, color2: Color, options?: { tolerance: number }): void;
+    export function colors(color1: Color, color2: Color): boolean;
+    export function colors(color1: Color, color2: Color, options: { tolerance: number }): boolean;
 }
 
 /**
