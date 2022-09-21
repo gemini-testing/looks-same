@@ -60,8 +60,6 @@ declare module looksSame {
         diffClusters?: CoordBounds[];
     }
 
-    export type LooksSameCallback = (error: Error | null, result: LooksSameResult) => void;
-
     /**
      * The options passed to looksSame function
      */
@@ -183,8 +181,8 @@ declare module looksSame {
         B: number;
     }
 
-    export function createDiff(options: CreateDiffOptions, callback: (error: Error | null) => any): void;
-    export function createDiff(options: CreateDiffAsBufferOptions, callback: (error: Error | null, buffer: Buffer) => any): void;
+    export async function createDiff(options: CreateDiffOptions): Promise<null>;
+    export async function createDiff(options: CreateDiffAsBufferOptions): Promise<Buffer>;
 
     /**
      * Compare two colors
@@ -202,12 +200,11 @@ declare module looksSame {
  * @param options The options passed to looksSame function
  * @param callback Call when finish compare
  */
- declare function looksSame(
+ declare async function looksSame(
     image1: string | Buffer | looksSame.BoundedImage,
     image2: string | Buffer | looksSame.BoundedImage,
-    options: looksSame.LooksSameOptions | {},
-    callback: looksSame.LooksSameCallback
-): void;
+    options: looksSame.LooksSameOptions | {}
+): Promise<LooksSameResult>;
 /**
  * Compare two images
  * @param image1 The first image
@@ -216,9 +213,8 @@ declare module looksSame {
  */
 declare function looksSame(
     image1: string | Buffer | looksSame.BoundedImage,
-    image2: string | Buffer | looksSame.BoundedImage,
-    callback: looksSame.LooksSameCallback
-): void;
+    image2: string | Buffer | looksSame.BoundedImage
+): Promise<LooksSameResult>;
 
 /**
  * Node.js library for comparing PNG-images, taking into account human color perception.
