@@ -114,6 +114,45 @@ declare module looksSame {
         clustersSize?: number;
     }
 
+    export interface GetDiffAreaOptions {
+        /**
+         * Strict comparsion
+         */
+         strict?: boolean;
+         /**
+          * ΔE value that will be treated as error in non-strict mode
+          */
+         tolerance?: number;
+         /**
+          * Some devices can have different proportion between physical and logical screen resolutions also known as pixel ratio.
+          */
+         pixelRatio?: number;
+         /**
+          * Ability to ignore text caret
+          */
+         ignoreCaret?: boolean;
+         /**
+          * Ability to ignore antialiasing
+          */
+         ignoreAntialiasing?: boolean;
+         /**
+          * Makes the search algorithm of the antialiasing less strict
+          */
+         antialiasingTolerance?: number;
+         /**
+          * Responsible for diff area which will be returned when comparing images.
+          */
+         stopOnFirstFail?: boolean;
+         /**
+          * Responsible for diff bounds clustering
+          */
+         shouldCluster?: boolean;
+         /**
+          * Radius for every diff cluster
+          */
+         clustersSize?: number;
+    }
+
     /**
      * The options passed to looksSame.createDiff function without diff
      */
@@ -180,6 +219,16 @@ declare module looksSame {
          */
         B: number;
     }
+
+    export async function getDiffArea(
+        image1: string | Buffer | BoundedImage,
+        image2: string | Buffer | BoundedImage
+    ): Promise<CoordBounds | null>;
+    export async function getDiffArea(
+        image1: string | Buffer | BoundedImage,
+        image2: string | Buffer | BoundedImage,
+        opts: GetDiffAreaOptions
+    ): Promise<CoordBounds | null>;
 
     export async function createDiff(options: CreateDiffOptions): Promise<null>;
     export async function createDiff(options: CreateDiffAsBufferOptions): Promise<Buffer>;
