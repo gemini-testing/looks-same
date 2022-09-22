@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.1](https://github.com/gemini-testing/looks-same/compare/v8.0.0...v8.0.1) (2022-09-22)
+
+
+### Typings
+
+* Update typings to async/await interface
+* Export interfaces
+
 ## [8.0.0](https://github.com/gemini-testing/looks-same/compare/v7.3.0...v8.0.0) (2022-09-19)
 
 
