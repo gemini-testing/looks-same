@@ -4,17 +4,16 @@
 
 Node.js library for comparing PNG-images, taking into account human color
 perception. It is created specially for the needs of visual regression testing
-for [`gemini`](http://github.com/gemini-testing/gemini) utility, but can be used
+for [`hermione`](http://github.com/gemini-testing/hermione) utility, but can be used
 for other purposes.
 
 ## Comparing images
 
 ```javascript
-var looksSame = require('looks-same');
+const looksSame = require('looks-same');
 
-looksSame('image1.png', 'image2.png', function(error, {equal}) {
-    // equal will be true, if images looks the same
-});
+// equal will be true, if images looks the same
+const {equal} = await looksSame('image1.png', 'image2.png');
 ```
 
 Parameters can be paths to files or buffer with compressed `png` image.
@@ -23,18 +22,14 @@ By default, it will detect only noticeable differences. If you wish to detect an
 use `strict` options:
 
 ```javascript
-looksSame('image1.png', 'image2.png', {strict: true}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {strict: true});
 ```
 
 You can also adjust the [ΔE](http://en.wikipedia.org/wiki/Color_difference) value that will be treated as error
 in non-strict mode:
 
 ```javascript
-looksSame('image1.png', 'image2.png', {tolerance: 5}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {tolerance: 5});
 ```
 
 Default `tolerance` in non-strict mode is 2.3 which is enough for the most cases.
@@ -47,9 +42,7 @@ known as `pixel ratio`. Default value for this proportion is 1.
 This param also affects the comparison result, so it can be set manually with `pixelRatio` option.
 
 ```javascript
-looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {pixelRatio: 2});
 ```
 
 ### Comparing images with ignoring caret
@@ -57,9 +50,7 @@ looksSame('image1.png', 'image2.png', {pixelRatio: 2}, function(error, {equal}) 
 Text caret in text input elements it is a pain for visual regression tasks, because it is always blinks. These diffs will be ignored by default. You can use `ignoreCaret` option with `false` value to disable ignoring such diffs. In that way text caret will be marked as diffs.
 
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreCaret: true}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {ignoreCaret: true});
 ```
 
 Both `strict` and `ignoreCaret` can be set independently of one another.
@@ -69,9 +60,7 @@ Both `strict` and `ignoreCaret` can be set independently of one another.
 Some images has difference while comparing because of antialiasing. These diffs will be ignored by default. You can use `ignoreAntialiasing` option with `false` value to disable ignoring such diffs. In that way antialiased pixels will be marked as diffs. Read more about [anti-aliasing algorithm](http://www.eejournal.ktu.lt/index.php/elt/article/view/10058/5000).
 
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true});
 ```
 
 Sometimes the antialiasing algorithm can work incorrectly due to some features of the browser rendering engine. Use the option `antialiasingTolerance` to make the algorithm less strict. With this option you can specify the minimum difference in brightness (zero by default) between the darkest/lightest pixel (which is adjacent to the antialiasing pixel) and theirs adjacent pixels.
@@ -80,9 +69,7 @@ We recommend that you don't increase this value above 10. If you need to increas
 
 Example:
 ```javascript
-looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTolerance: 3}, function(error, {equal}) {
-    ...
-});
+const {equal} = await looksSame('image1.png', 'image2.png', {ignoreAntialiasing: true, antialiasingTolerance: 3});
 ```
 
 ### Getting diff bounds
@@ -92,22 +79,21 @@ Looksame returns information about diff bounds. It returns only first pixel if y
 Looksame returns diff bounds divided into clusters if option `shouldCluster` passed with `true` value. Moreover you can pass clusters size using `clustersSize` option.
 
 ```javascript
-looksSame('image1.png', 'image2.png', {shouldCluster: true, clustersSize: 10}, function(error, {equal, diffBounds, diffClusters}) {
-    // {
-    //     equal: false,
-    //     diffBounds: {left: 10, top: 10, right: 20, bottom: 20}
-    //     diffClusters: [
-    //         {left: 10, top: 10, right: 14, bottom: 14},
-    //         {left: 16, top: 16, right: 20, bottom: 20}
-    //     ]
-    // }
-});
+// {
+//     equal: false,
+//     diffBounds: {left: 10, top: 10, right: 20, bottom: 20}
+//     diffClusters: [
+//         {left: 10, top: 10, right: 14, bottom: 14},
+//         {left: 16, top: 16, right: 20, bottom: 20}
+//     ]
+// }
+const {equal, diffBounds, diffClusters} = await looksSame('image1.png', 'image2.png', {shouldCluster: true, clustersSize: 10});
 ```
 
 ## Building diff image
 
 ```javascript
-looksSame.createDiff({
+await looksSame.createDiff({
     reference: '/path/to/reference/image.png',
     current: '/path/to/current/image.png',
     diff: '/path/to/save/diff/to.png',
@@ -117,8 +103,6 @@ looksSame.createDiff({
     antialiasingTolerance: 0,
     ignoreAntialiasing: true, // ignore antialising by default
     ignoreCaret: true // ignore caret by default
-}, function(error) {
-    ...
 });
 ```
 
@@ -129,10 +113,8 @@ pass any `diff: path` to the `createDiff` method. The callback will then
 receive a `Buffer` containing the diff as the 2nd argument.
 
 ```javascript
-looksSame.createDiff({
+const buffer = await looksSame.createDiff({
     // exactly same options as above, but without diff
-}, function(error, buffer) {
-    ...
 });
 ```
 
@@ -141,7 +123,7 @@ looksSame.createDiff({
 If you just need to compare two colors you can use `colors` function:
 
 ```javascript
-looksSame.colors(
+const equal = looksSame.colors(
     {R: 255, G: 0, B: 0},
     {R: 254, G: 1, B: 1},
     {tolerance: 2.5}
