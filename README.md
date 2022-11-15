@@ -2,10 +2,16 @@
 
 [![Build Status](https://travis-ci.org/gemini-testing/looks-same.svg?branch=master)](https://travis-ci.org/gemini-testing/looks-same)
 
-Node.js library for comparing PNG-images, taking into account human color
+Node.js library for comparing images, taking into account human color
 perception. It is created specially for the needs of visual regression testing
 for [`hermione`](http://github.com/gemini-testing/hermione) utility, but can be used
 for other purposes.
+
+## Supported image formats
+
+JPEG, PNG, WebP, GIF, AVIF, TIFF and SVG images are supported.
+
+*Note: If you want to compare jpeg files, you may encounter random differences due to the jpeg structure if they are not lossless jpeg files.*
 
 ## Comparing images
 
@@ -16,7 +22,7 @@ const looksSame = require('looks-same');
 const {equal} = await looksSame('image1.png', 'image2.png');
 ```
 
-Parameters can be paths to files or buffer with compressed `png` image.
+Parameters can be paths to files or buffer with compressed image.
 
 By default, it will detect only noticeable differences. If you wish to detect any difference,
 use `strict` options:
@@ -109,12 +115,15 @@ await looksSame.createDiff({
 ## Building diff image as a Buffer
 
 If you don't want the diff image to be written on disk, then simply **don't**
-pass any `diff: path` to the `createDiff` method. The callback will then
-receive a `Buffer` containing the diff as the 2nd argument.
+pass any `diff: path` to the `createDiff` method. The method will then
+resolve a `Buffer` containing the diff. You can also specify buffer format
+with `extension` key. Default extension is `png`. List of supported formats:
+*`heic`, `heif`, `avif`, `jpeg`, `jpg`, `png`, `raw`, `tiff`, `tif`, `webp`, `gif`, `jp2`, `jpx`, `j2k`, `j2c`*
 
 ```javascript
 const buffer = await looksSame.createDiff({
-    // exactly same options as above, but without diff
+    // exactly same options as above, but with optional extension and without diff
+    extension: 'png'
 });
 ```
 

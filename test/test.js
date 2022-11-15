@@ -71,7 +71,7 @@ describe('looksSame', () => {
             assert.notCalled(utils.getDiffPixelsCoords);
         });
 
-        it('should return false for different images (compare by png pixels)', async () => {
+        it('should return false for different images (compare by img pixels)', async () => {
             sandbox.spy(utils, 'getDiffPixelsCoords');
 
             const {equal} = await looksSame(getImage('ref.png'), getImage('different.png'));

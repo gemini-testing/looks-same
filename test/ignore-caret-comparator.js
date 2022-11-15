@@ -16,14 +16,14 @@ describe('IgnoreCaretComparator', () => {
         const width = pixels[0].length;
         const height = pixels.length;
 
-        const png1 = {data: pixels, getPixel: (x, y) => pixels[y][x], width, height};
-        const png2 = {data: emptyPixels, getPixel: (x, y) => emptyPixels[y][x], width, height};
+        const img1 = {data: pixels, getPixel: (x, y) => pixels[y][x], width, height};
+        const img2 = {data: emptyPixels, getPixel: (x, y) => emptyPixels[y][x], width, height};
 
         let res = true;
 
         for (let y = 0; y < pixels.length; ++y) {
             for (let x = 0; x < pixels[y].length; ++x) {
-                res = comparator({color1: png1.data[y][x], color2: png2.data[y][x], x, y, png1, png2});
+                res = comparator({color1: img1.data[y][x], color2: img2.data[y][x], x, y, img1, img2});
                 if (!res) {
                     break;
                 }
