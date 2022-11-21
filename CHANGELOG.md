@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.1.0](https://github.com/gemini-testing/looks-same/compare/v8.0.0...v8.1.0) (2022-11-21)
+
+
+### Features
+
+* add different files format support ([d32441a](https://github.com/gemini-testing/looks-same/commit/d32441a31cfa1d7f5ab0cf21663c01e8bad4e87f))
+
 ## [8.0.1](https://github.com/gemini-testing/looks-same/compare/v8.0.0...v8.0.1) (2022-09-22)
 
 
