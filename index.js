@@ -77,14 +77,15 @@ const buildDiffImage = async (img1, img2, options) => {
     const minHeight = Math.min(img1.height, img2.height);
 
     const highlightColor = options.highlightColor;
-    const alphaLevel = isNaN(options.transparency) ? 255 : options.transparency;
-    const resultBuffer = Buffer.alloc(width * height * 3);
+    const alphaLevel = isNaN(options.matchingPixelAlpha) ? 255 : options.matchingPixelAlpha;
+    const resultBuffer = Buffer.alloc(width * height * 4);
 
-    const setPixel = (buf, x, y, {R, G, B}) => {
-        const pixelInd = (y * width + x) * 3;
+    const setPixel = (buf, x, y, {R, G, B, A = 255}) => {
+        const pixelInd = (y * width + x) * 4;
         buf[pixelInd] = R;
         buf[pixelInd + 1] = G;
         buf[pixelInd + 2] = B;
+        buf[pixelInd + 3] = A;
     };
 
     await iterateRect(width, height, (x, y) => {
@@ -99,11 +100,11 @@ const buildDiffImage = async (img1, img2, options) => {
         if (!options.comparator({color1, color2, img1, img2, x, y, width, height})) {
             setPixel(resultBuffer, x, y, highlightColor);
         } else {
-            setPixel(resultBuffer, x, y, color1, alphaLevel);
+            setPixel(resultBuffer, x, y, {...color1, A:alphaLevel});
         }
     });
 
-    return img.fromBuffer(resultBuffer, {raw: {width, height, channels: 3}});
+    return img.fromBuffer(resultBuffer, {raw: {width, height, channels: 4}});
 };
 
 const parseColorString = (str) => {
@@ -135,7 +136,8 @@ const prepareOpts = (opts) => {
     return _.defaults(opts, {
         ignoreCaret: true,
         ignoreAntialiasing: true,
-        antialiasingTolerance: 0
+        antialiasingTolerance: 0,
+        matchingPixelAlpha: 255
     });
 };
 
@@ -217,7 +219,8 @@ exports.createDiff = async function saveDiff(opts) {
     const {first, second} = await utils.readPair(image1, image2);
     const diffImage = await buildDiffImage(first, second, {
         highlightColor: parseColorString(opts.highlightColor),
-        comparator: createComparator(first, second, opts)
+        comparator: createComparator(first, second, opts),
+        matchingPixelAlpha: opts.matchingPixelAlpha
     });
 
     return opts.diff === undefined
