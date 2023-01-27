@@ -449,6 +449,44 @@ describe('createDiff', () => {
 
         expect(equal).to.equal(true);
     });
+    it('should make all matching pixels fully transparent is matchingPixelAlpha set to 0', async () => {
+       await looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            matchingPixelAlpha: 0
+        });
+
+       const {equal} = await looksSame(imagePath('diffs/different-0-alpha.png'), this.tempName, {strict: true});
+       expect(equal).to.equal(true);
+    });
+
+    it('should support partial matchingPixelAlpha in the diff', async () => {
+        await looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            matchingPixelAlpha: 50
+        });
+
+        const {equal} = await looksSame(imagePath('diffs/different-50-alpha.png'), this.tempName, {strict: true});
+        expect(equal).to.equal(true);
+    });
+
+    it('should default to no transparency in the diff if the option is omitted', async () => {
+        await looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff',
+            matchingPixelAlpha: undefined
+        });
+
+        const {equal} = await looksSame(imagePath('diffs/small-magenta.png'), this.tempName, {strict: true});
+        expect(equal).to.equal(true);
+    });
 
     it('should allow to build diff for taller images', async () => {
         await looksSame.createDiff({
