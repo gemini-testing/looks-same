@@ -220,18 +220,18 @@ declare module looksSame {
         B: number;
     }
 
-    export async function getDiffArea(
+    export function getDiffArea(
         image1: string | Buffer | BoundedImage,
         image2: string | Buffer | BoundedImage
     ): Promise<CoordBounds | null>;
-    export async function getDiffArea(
+    export function getDiffArea(
         image1: string | Buffer | BoundedImage,
         image2: string | Buffer | BoundedImage,
         opts: GetDiffAreaOptions
     ): Promise<CoordBounds | null>;
 
-    export async function createDiff(options: CreateDiffOptions): Promise<null>;
-    export async function createDiff(options: CreateDiffAsBufferOptions): Promise<Buffer>;
+    export function createDiff(options: CreateDiffOptions): Promise<null>;
+    export function createDiff(options: CreateDiffAsBufferOptions): Promise<Buffer>;
 
     /**
      * Compare two colors
@@ -250,11 +250,11 @@ declare module looksSame {
  * @param options The options passed to looksSame function
  * @param callback Call when finish compare
  */
- declare async function looksSame(
+ declare function looksSame(
     image1: string | Buffer | looksSame.BoundedImage,
     image2: string | Buffer | looksSame.BoundedImage,
     options: looksSame.LooksSameOptions | {}
-): Promise<LooksSameResult>;
+): Promise<looksSame.LooksSameResult>;
 /**
  * Compare two images
  * @param image1 The first image
@@ -264,7 +264,7 @@ declare module looksSame {
 declare function looksSame(
     image1: string | Buffer | looksSame.BoundedImage,
     image2: string | Buffer | looksSame.BoundedImage
-): Promise<LooksSameResult>;
+): Promise<looksSame.LooksSameResult>;
 
 /**
  * Node.js library for comparing PNG-images, taking into account human color perception.
