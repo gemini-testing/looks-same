@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('lodash');
-const parseColor = require('parse-color');
 const colorDiff = require('color-diff');
 const img = require('./lib/image');
 const areColorsSame = require('./lib/same-colors');
@@ -22,6 +21,9 @@ const makeNoCaretColorComparator = (comparator, pixelRatio) => {
 };
 
 function makeCIEDE2000Comparator(tolerance) {
+    const upperBound = tolerance * 6.2; // cie76 <= 6.2 * ciede2000
+    const lowerBound = tolerance * 0.695; // cie76 >= 0.695 * ciede2000
+
     return function doColorsLookSame(data) {
         if (areColorsSame(data)) {
             return true;
@@ -29,6 +31,20 @@ function makeCIEDE2000Comparator(tolerance) {
         /*jshint camelcase:false*/
         const lab1 = colorDiff.rgb_to_lab(data.color1);
         const lab2 = colorDiff.rgb_to_lab(data.color2);
+
+        const cie76 = Math.sqrt(
+            (lab1.L - lab2.L) * (lab1.L - lab2.L) +
+            (lab1.a - lab2.a) * (lab1.a - lab2.a) +
+            (lab1.b - lab2.b) * (lab1.b - lab2.b)
+        );
+
+        if (cie76 >= upperBound) {
+            return false;
+        }
+
+        if (cie76 <= lowerBound) {
+            return true;
+        }
 
         return colorDiff.diff(lab1, lab2) < tolerance;
     };
@@ -95,7 +111,7 @@ const buildDiffImage = async (img1, img2, options) => {
         const color1 = img1.getPixel(x, y);
         const color2 = img2.getPixel(x, y);
 
-        if (!options.comparator({color1, color2, img1, img2, x, y, width, height})) {
+        if (!options.comparator({color1, color2, img1, img2, x, y, width, height, minWidth, minHeight})) {
             setPixel(resultBuffer, x, y, highlightColor);
         } else {
             setPixel(resultBuffer, x, y, color1);
@@ -103,16 +119,6 @@ const buildDiffImage = async (img1, img2, options) => {
     });
 
     return img.fromBuffer(resultBuffer, {raw: {width, height, channels: 3}});
-};
-
-const parseColorString = (str) => {
-    const parsed = parseColor(str || '#ff00ff');
-
-    return {
-        R: parsed.rgb[0],
-        G: parsed.rgb[1],
-        B: parsed.rgb[2]
-    };
 };
 
 const getToleranceFromOpts = (opts) => {
@@ -162,10 +168,10 @@ module.exports = exports = async function looksSame(image1, image2, opts = {}) {
     if (areBuffersEqual) {
         const diffBounds = (new DiffArea()).area;
 
-        return {equal: true, metaInfo, diffBounds, diffClusters: [diffBounds]};
+        return {equal: true, metaInfo, diffBounds, diffClusters: [diffBounds], diffImage: null};
     }
 
-    if (first.width !== second.width || first.height !== second.height) {
+    if (!opts.createDiffImage && (first.width !== second.width || first.height !== second.height)) {
         const diffBounds = getMaxDiffBounds(first, second);
 
         return {equal: false, metaInfo, diffBounds, diffClusters: [diffBounds]};
@@ -178,7 +184,11 @@ module.exports = exports = async function looksSame(image1, image2, opts = {}) {
     );
 
     const comparator = createComparator(img1, img2, opts);
-    const {stopOnFirstFail, shouldCluster, clustersSize} = opts;
+    const {stopOnFirstFail, shouldCluster, clustersSize, createDiffImage, highlightColor} = opts;
+
+    if (createDiffImage) {
+        return utils.calcDiffImage(img1, img2, comparator, highlightColor, clustersSize);
+    }
 
     const {diffArea, diffClusters} = await utils.getDiffPixelsCoords(img1, img2, comparator, {stopOnFirstFail, shouldCluster, clustersSize});
     const diffBounds = diffArea.area;
@@ -215,7 +225,7 @@ exports.createDiff = async function saveDiff(opts) {
     const [image1, image2] = utils.formatImages(opts.reference, opts.current);
     const {first, second} = await utils.readPair(image1, image2);
     const diffImage = await buildDiffImage(first, second, {
-        highlightColor: parseColorString(opts.highlightColor),
+        highlightColor: utils.parseColorString(opts.highlightColor),
         comparator: createComparator(first, second, opts)
     });
 

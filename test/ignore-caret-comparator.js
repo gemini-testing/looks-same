@@ -23,7 +23,16 @@ describe('IgnoreCaretComparator', () => {
 
         for (let y = 0; y < pixels.length; ++y) {
             for (let x = 0; x < pixels[y].length; ++x) {
-                res = comparator({color1: img1.data[y][x], color2: img2.data[y][x], x, y, img1, img2});
+                res = comparator({
+                    color1: img1.data[y][x],
+                    color2: img2.data[y][x],
+                    x,
+                    y,
+                    img1,
+                    img2,
+                    minWidth: width,
+                    minHeight: height
+                });
                 if (!res) {
                     break;
                 }
@@ -173,7 +182,8 @@ describe('IgnoreCaretComparator', () => {
         ]);
     });
 
-    it('should accept images with caret in the bottom right corner', () => {
+    it('should accept images with caret in the bottom right corner', async () => {
+        //await new Promise(res => setTimeout(res, 5000));
         expectAccepted({pixelRatio: 1}, [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
