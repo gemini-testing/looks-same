@@ -127,6 +127,26 @@ const buffer = await looksSame.createDiff({
 });
 ```
 
+## Comparing images and creating diff image simultaneously
+
+If you need both co compare images and create diff image, you can pass option `createDiffImage: true`,
+it would work faster than two separate function calls:
+
+```javascript
+const {
+    equal,
+    diffImage,
+    differentPixels,
+    totalPixels,
+    diffBounds,
+    diffClusters
+} = await looksSame('image1.png', 'image2.png', {createDiffImage: true});
+
+if (!equal) {
+    await diffImage.save('diffImage.png');
+}
+```
+
 ## Comparing colors
 
 If you just need to compare two colors you can use `colors` function:
