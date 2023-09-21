@@ -79,12 +79,17 @@ declare module looksSame {
         diffClusters: CoordBounds[];
     }
 
-    interface LooksSameWithNoDiffResult extends LooksSameBaseResult {
+    interface LooksSameCreateDiffImageResult extends LooksSameBaseResult {
+        differentPixels: number;
+        totalPixels: number;
+    }
+
+    interface LooksSameWithNoDiffResult extends LooksSameCreateDiffImageResult {
         equal: true;
         diffImage: null;
     }
 
-    interface LooksSameWithExistingDiffResult extends LooksSameBaseResult {
+    interface LooksSameWithExistingDiffResult extends LooksSameCreateDiffImageResult {
         equal: false;
         diffImage: DiffImage;
     }
