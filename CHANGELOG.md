@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.2.2](https://github.com/gemini-testing/looks-same/compare/v8.2.1...v8.2.2) (2023-09-25)
+
 ### [8.2.1](https://github.com/gemini-testing/looks-same/compare/v8.2.0...v8.2.1) (2023-08-02)
 
 ## [8.2.0](https://github.com/gemini-testing/looks-same/compare/v8.1.0...v8.2.0) (2023-08-02)
