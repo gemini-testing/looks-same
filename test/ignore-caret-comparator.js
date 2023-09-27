@@ -23,7 +23,16 @@ describe('IgnoreCaretComparator', () => {
 
         for (let y = 0; y < pixels.length; ++y) {
             for (let x = 0; x < pixels[y].length; ++x) {
-                res = comparator({color1: img1.data[y][x], color2: img2.data[y][x], x, y, img1, img2});
+                res = comparator({
+                    color1: img1.data[y][x],
+                    color2: img2.data[y][x],
+                    x,
+                    y,
+                    img1,
+                    img2,
+                    minWidth: width,
+                    minHeight: height
+                });
                 if (!res) {
                     break;
                 }

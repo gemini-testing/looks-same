@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.2.3](https://github.com/gemini-testing/looks-same/compare/v8.2.2...v8.2.3) (2023-09-27)
+
+
+### Bug Fixes
+
+* createDiffImage off by one ([cd9744b](https://github.com/gemini-testing/looks-same/commit/cd9744b576e56b957f33c3ff2ec3c41a76457a62))
+
+### [8.2.2](https://github.com/gemini-testing/looks-same/compare/v8.2.1...v8.2.2) (2023-09-25)
+
+### [8.2.1](https://github.com/gemini-testing/looks-same/compare/v8.2.0...v8.2.1) (2023-08-02)
+
+## [8.2.0](https://github.com/gemini-testing/looks-same/compare/v8.1.0...v8.2.0) (2023-08-02)
+
+
+### Features
+
+* calc equality and build diff simultaneously ([abbe9ed](https://github.com/gemini-testing/looks-same/commit/abbe9ed29f18d656317097053e74afe11bacda44))
+
 ## [8.1.0](https://github.com/gemini-testing/looks-same/compare/v8.0.0...v8.1.0) (2022-11-21)
 
 

@@ -42,23 +42,61 @@ declare module looksSame {
         boundingBox: CoordBounds;
     }
 
-    /**
-     * The result obtained from the function.
-    */
-    export interface LooksSameResult {
+    export interface DiffImage {
+        /**
+         * Width of the diff image
+         */
+        width: number;
+        /**
+         * Height of the diff image
+         */
+        height: number;
+        /**
+         * Save the diff image
+         * Path should be specified with image extension
+         */
+        save: (path: string) => Promise<void>;
+        /**
+         * Create buffer of the diff image
+         * If you need to save the image, consider using `save` method
+         * Shoud not be mixed with `save` method
+         */
+        createBuffer: (extension: "png" | "raw") => Promise<Buffer>;
+    }
+
+    interface LooksSameBaseResult {
         /**
          * true if images are equal, false - otherwise
          */
-        equal?: boolean;
+        equal: boolean;
         /**
          * diff bounds for not equal images
          */
-        diffBounds?: CoordBounds;
+        diffBounds: CoordBounds;
         /**
          * diff clusters for not equal images
          */
-        diffClusters?: CoordBounds[];
+        diffClusters: CoordBounds[];
     }
+
+    interface LooksSameCreateDiffImageResult extends LooksSameBaseResult {
+        differentPixels: number;
+        totalPixels: number;
+    }
+
+    interface LooksSameWithNoDiffResult extends LooksSameCreateDiffImageResult {
+        equal: true;
+        diffImage: null;
+    }
+
+    interface LooksSameWithExistingDiffResult extends LooksSameCreateDiffImageResult {
+        equal: false;
+        diffImage: DiffImage;
+    }
+    /**
+     * The result obtained from the function.
+    */
+    export type LooksSameResult<T = false> = T extends true ? (LooksSameWithNoDiffResult | LooksSameWithExistingDiffResult) : LooksSameBaseResult;
 
     /**
      * The options passed to looksSame function
@@ -112,6 +150,10 @@ declare module looksSame {
          * Radius for every diff cluster
          */
         clustersSize?: number;
+        /**
+         * If you need both to compare images and create diff image
+         */
+        createDiffImage?: boolean
     }
 
     export interface GetDiffAreaOptions {
@@ -248,23 +290,18 @@ declare module looksSame {
  * @param image1 The first image
  * @param image2 The second image
  * @param options The options passed to looksSame function
- * @param callback Call when finish compare
- */
- declare function looksSame(
-    image1: string | Buffer | looksSame.BoundedImage,
-    image2: string | Buffer | looksSame.BoundedImage,
-    options: looksSame.LooksSameOptions | {}
-): Promise<looksSame.LooksSameResult>;
-/**
- * Compare two images
- * @param image1 The first image
- * @param image2 The second image
- * @param callback Call when finish compare
  */
 declare function looksSame(
     image1: string | Buffer | looksSame.BoundedImage,
-    image2: string | Buffer | looksSame.BoundedImage
-): Promise<looksSame.LooksSameResult>;
+    image2: string | Buffer | looksSame.BoundedImage,
+    options?: looksSame.LooksSameOptions & { createDiffImage?: false },
+): Promise<looksSame.LooksSameResult<false>>;
+
+declare function looksSame(
+    image1: string | Buffer | looksSame.BoundedImage,
+    image2: string | Buffer | looksSame.BoundedImage,
+    options: looksSame.LooksSameOptions & { createDiffImage: true },
+): Promise<looksSame.LooksSameResult<true>>;
 
 /**
  * Node.js library for comparing PNG-images, taking into account human color perception.
