@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.2.4](https://github.com/gemini-testing/looks-same/compare/v8.2.3...v8.2.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* return diffArea in diffClusters if shouldCluster is false ([0c92966](https://github.com/gemini-testing/looks-same/commit/0c929665092fdc79e5db6bb56d7982eeb01ec4e6))
+
 ### [8.2.3](https://github.com/gemini-testing/looks-same/compare/v8.2.2...v8.2.3) (2023-09-27)
 
 
