@@ -14,7 +14,7 @@
     "lodash": "^4.17.3",
     "nested-error-stacks": "^2.1.0",
     "parse-color": "^1.0.0",
-    "sharp": "~0.30.7"
+    "sharp": "~0.32.6"
   },
   "devDependencies": {
     "@types/node": "^10.12.3",
