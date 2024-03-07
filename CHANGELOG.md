@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0-rc.0](https://github.com/gemini-testing/looks-same/compare/v9.0.0...v10.0.0-rc.0) (2024-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* node versions less than 18.17.0 are no longer supported
+
+* drop node versions less than 18.17.0 ([402cfe0](https://github.com/gemini-testing/looks-same/commit/402cfe08b11796c86572cf6de454c8583792d461))
+
 ## [9.0.0](https://github.com/gemini-testing/looks-same/compare/v8.2.4...v9.0.0) (2023-10-31)
 
 
