@@ -4,7 +4,7 @@
 
 Node.js library for comparing images, taking into account human color
 perception. It is created specially for the needs of visual regression testing
-for [`hermione`](http://github.com/gemini-testing/hermione) utility, but can be used
+for [`testplane`](http://github.com/gemini-testing/testplane) utility, but can be used
 for other purposes.
 
 ## Supported image formats
