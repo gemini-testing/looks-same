@@ -525,6 +525,24 @@ describe('createDiff', () => {
         expect(equal).to.be.equal(true);
     });
 
+    it('should return an equal property if the diff path option is specified', async () => {
+        const equalResponse = await looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('same.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        });
+        const notEqualResponse = await looksSame.createDiff({
+            reference: srcPath('ref.png'),
+            current: srcPath('different.png'),
+            diff: this.tempName,
+            highlightColor: '#ff00ff'
+        });
+
+        expect(equalResponse).to.have.property('equal', true);
+        expect(notEqualResponse).to.have.property('equal', false);
+    });
+
     describe('with comparing by areas', () => {
         it('should create diff image equal to reference', async () => {
             await looksSame.createDiff({
