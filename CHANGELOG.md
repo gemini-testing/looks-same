@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.0.1](https://github.com/gemini-testing/looks-same/compare/v9.0.0...v9.0.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* remove async from index.d.ts ([59a6a1c](https://github.com/gemini-testing/looks-same/commit/59a6a1cd26455dd133d5da7aca1d569694e9ce17))
+
 ## [9.0.0](https://github.com/gemini-testing/looks-same/compare/v8.2.4...v9.0.0) (2023-10-31)
 
 
