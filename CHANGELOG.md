@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.0.1](https://github.com/gemini-testing/looks-same/compare/v9.0.0...v9.0.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* remove async from index.d.ts ([59a6a1c](https://github.com/gemini-testing/looks-same/commit/59a6a1cd26455dd133d5da7aca1d569694e9ce17))
+
+## [9.0.0](https://github.com/gemini-testing/looks-same/compare/v8.2.4...v9.0.0) (2023-10-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* node versions less than 18.0.0 are no longer supported
+
+### Features
+
+* drop node versions less than 18 ([1f0097c](https://github.com/gemini-testing/looks-same/commit/1f0097ca7e29e11ba19b82a821c726171505b446))
+
+
+### Bug Fixes
+
+* run linters ([9d839dd](https://github.com/gemini-testing/looks-same/commit/9d839dd016ac221e03264b2540150ab317c6c290))
+* update sharp to fix CVE-2023-4863 ([9b3a0a1](https://github.com/gemini-testing/looks-same/commit/9b3a0a109f3676a0ea00ba1a0b16e1756a5e6bd1))
+
+### [8.2.4](https://github.com/gemini-testing/looks-same/compare/v8.2.3...v8.2.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* return diffArea in diffClusters if shouldCluster is false ([0c92966](https://github.com/gemini-testing/looks-same/commit/0c929665092fdc79e5db6bb56d7982eeb01ec4e6))
+
 ### [8.2.3](https://github.com/gemini-testing/looks-same/compare/v8.2.2...v8.2.3) (2023-09-27)
 
 
