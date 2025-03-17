@@ -7,6 +7,13 @@ perception. It is created specially for the needs of visual regression testing
 for [`testplane`](http://github.com/gemini-testing/testplane) utility, but can be used
 for other purposes.
 
+## Benchmark
+
+Benchmark is presented in the corresponding directory.
+
+- [Benchmark description](./benchmark/README.md)
+- [Benchmark results](./benchmark/results.md)
+
 ## Supported image formats
 
 JPEG, PNG, WebP, GIF, AVIF, TIFF and SVG images are supported.
