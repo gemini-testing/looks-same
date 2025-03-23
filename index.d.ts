@@ -232,6 +232,10 @@ declare module looksSame {
          * Ability to ignore text caret
          */
         ignoreCaret?: boolean;
+        /**
+         * Defines what image type is created
+         */
+        extension?: string;
     }
 
     /**
