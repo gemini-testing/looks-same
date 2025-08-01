@@ -102,9 +102,12 @@ const buildDiffImage = async (img1, img2, options) => {
         buf[pixelInd + 2] = B;
     };
 
+    let isExactMatch = true;
+
     await iterateRect(width, height, (x, y) => {
         if (x >= minWidth || y >= minHeight) {
             setPixel(resultBuffer, x, y, highlightColor);
+            isExactMatch = false;
             return;
         }
 
@@ -113,12 +116,15 @@ const buildDiffImage = async (img1, img2, options) => {
 
         if (!options.comparator({color1, color2, img1, img2, x, y, width, height, minWidth, minHeight})) {
             setPixel(resultBuffer, x, y, highlightColor);
+            isExactMatch = false;
         } else {
             setPixel(resultBuffer, x, y, color1);
         }
     });
 
-    return img.fromBuffer(resultBuffer, {raw: {width, height, channels: 3}});
+    const imgFromBuffer = await img.fromBuffer(resultBuffer, {raw: {width, height, channels: 3}});
+
+    return {diffImage: imgFromBuffer, isExactMatch: isExactMatch};
 };
 
 const getToleranceFromOpts = (opts) => {
@@ -224,14 +230,19 @@ exports.createDiff = async function saveDiff(opts) {
 
     const [image1, image2] = utils.formatImages(opts.reference, opts.current);
     const {first, second} = await utils.readPair(image1, image2);
-    const diffImage = await buildDiffImage(first, second, {
+    const {diffImage, isExactMatch} = await buildDiffImage(first, second, {
         highlightColor: utils.parseColorString(opts.highlightColor),
         comparator: createComparator(first, second, opts)
     });
 
-    return opts.diff === undefined
-        ? diffImage.createBuffer(opts.extension)
-        : diffImage.save(opts.diff);
+    if (opts.diff === undefined) {
+        return diffImage.createBuffer(opts.extension);
+    }
+
+    const resultSaveDiff = await diffImage.save(opts.diff);
+    resultSaveDiff.equal = isExactMatch;
+
+    return resultSaveDiff;
 };
 
 exports.colors = (color1, color2, opts) => {
