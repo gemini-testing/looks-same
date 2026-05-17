@@ -5,7 +5,7 @@
 /// <reference types="node"/>
 
 // https://stackoverflow.com/questions/44058101/typescript-declare-third-party-modules
-declare module looksSame {
+declare namespace looksSame {
     /**
      * coordinate bounds
      */
