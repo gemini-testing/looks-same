@@ -39,6 +39,12 @@ describe('looksSame', () => {
         })).to.eventually.be.rejectedWith(TypeError);
     });
 
+    it('should throw when comparing empty files', async () => {
+        const emptyPath = path.join(__dirname, 'data', 'empty.png');
+        await expect(looksSame(emptyPath, emptyPath))
+            .to.eventually.be.rejectedWith(Error, /empty/);
+    });
+
     it('should work when opts is undefined', async () => {
         await expect(looksSame(srcPath('ref.png'), srcPath('same.png')))
             .to.eventually.be.fulfilled;
